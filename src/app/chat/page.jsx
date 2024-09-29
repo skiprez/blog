@@ -19,11 +19,10 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [userId, setUserId] = useState('');
-  const [isUserScrolling, setIsUserScrolling] = useState(false); // Track user scrolling
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
   
-  // Ref to the last message
   const lastMessageRef = useRef(null);
-  const messagesEndRef = useRef(null); // Ref to the end of the message list
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     let storedUserId = localStorage.getItem('userId');
@@ -47,12 +46,10 @@ export default function Chat() {
     }
 
     fetchMessages();
-
     const intervalId = setInterval(fetchMessages, 2000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // Scroll to the bottom if the user is not scrolling
   useEffect(() => {
     if (!isUserScrolling && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -83,14 +80,9 @@ export default function Chat() {
     setNewMessage('');
   };
 
-  const handleLeaveChat = () => {
-    console.log('User has left the chat.');
-  };
-
   return (
     <div className="flex flex-col h-screen w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="flex justify-between items-center p-4">
-        {/* Chat Title */}
         <h1 className="text-center text-2xl font-bold text-white">
           Chat of All Users
         </h1>
@@ -104,46 +96,49 @@ export default function Chat() {
       {/* Message List */}
       <div
         className="flex-grow overflow-y-auto p-4 backdrop-filter backdrop-blur-lg bg-black/30 rounded-lg"
-        onScroll={() => setIsUserScrolling(true)} // Set scrolling flag
-        onMouseEnter={() => setIsUserScrolling(false)} // Reset flag when mouse enters the message list
+        onScroll={() => setIsUserScrolling(true)}
+        onMouseEnter={() => setIsUserScrolling(false)}
       >
         <div className="space-y-4">
           {messages.map((message) => (
-            <div className={`flex ${message.user_id === userId ? 'justify-end' : ''}`} key={message.id}>
-              <Card className={message.user_id === userId ? 'bg-blue-600 shadow-md rounded-lg border-0' : 'bg-gray-600 shadow-md rounded-lg border-0'}>
-                <CardContent>
-                  {/* User Info */}
+            <div className={`flex ${message.user_id === userId ? 'justify-end' : 'justify-start'}`} key={message.id}>
+              <Card className={`shadow-md rounded-lg border-0 max-w-[75%] ${message.user_id === userId ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                <CardContent className="p-2"> {/* Reduced padding for mobile responsiveness */}
                   <div className="flex items-center space-x-2 text-sm">
                     <Link href={`/user/${message.user_id}`} className="mt-2">
-                      <Image src={account_icon} className="w-[20px] h-[20px] rounded-full mb-[7px]"/>
+                      <Image 
+                        src={account_icon} 
+                        className="w-[45px] sm:w-[30px] sm:h-[30px] rounded-full mb-[7px] object-cover" 
+                        alt="Account Icon" 
+                        width={30} 
+                        height={30} 
+                      />
                     </Link>
                     <Link href={`/user/${message.user_id}`}>
                       <span className="text-white font-semibold">{message.user_id}</span>
                     </Link>
-                    <span className="text-black text-xs">
+                    <span className="text-gray-300 text-xs">
                       {new Date(message.created_at).toLocaleString()}
                     </span>
                   </div>
-                  {/* Message */}
-                  <div className="p-3 rounded-lg text-white">
+                  <div className="p-2 rounded-lg text-white"> {/* Reduced padding for message content */}
                     {message.content}
                   </div>
                 </CardContent>
               </Card>
             </div>
           ))}
-          {/* This div is the target for scrolling */}
           <div ref={messagesEndRef} />
         </div>
       </div>
 
       {/* Send Message */}
       <div className="p-4 bg-gray-800 shadow-lg rounded-lg">
-        <div className="flex">
+        <div className="flex flex-col md:flex-row md:items-center">
           <Input
             type="text"
             placeholder="Type your message..."
-            className="mr-2"
+            className="mr-2 mb-2 md:mb-0 md:flex-grow"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />

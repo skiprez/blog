@@ -102,10 +102,10 @@ export default function Home() {
       </div>
 
       {/* Scrolling Menu */}
-      <div className="text-white text-md border-white md:w-full w-[400px] md:max-h-[680px] max-h-[550px] overflow-y-auto">
+      <div className="text-white text-md border-white md:w-full w-screen md:max-h-[680px] max-h-[550px] overflow-y-auto">
         {posts.length > 0 ? (
           posts.map((post) => (
-            <div key={post.id} className="border-b border-white min-h-[100px] mt-2 flex flex-col p-2">
+            <div key={post.id} className="border-b w-screen md:w-full border-white min-h-[100px] mt-2 flex flex-col p-2">
               {/* User Info */}
               <div className="flex flex-row max-w-[200px]">
                 <Image src={account_icon} className="w-[50px] h-[50px] rounded-full mb-2" />
