@@ -5,7 +5,6 @@ export async function POST(req, { params }) {
   const { postId } = params;
 
   try {
-    // Update the shares in the database
     const result = await pool.query(
       `UPDATE posts SET shares = shares + 1 WHERE id = $1`,
       [postId]

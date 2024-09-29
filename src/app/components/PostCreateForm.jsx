@@ -33,9 +33,16 @@ export default function PostForm({ onAddPost }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const onSubmit = async (data) => {
-    const response = await fetch('/api/CreatePost', {
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+      console.error('User ID not found!');
+      return;
+    }
+
+    const response = await fetch('/api/Posts', {
         method: 'POST',
-        body: JSON.stringify({ post: data.post }),
+        body: JSON.stringify({ post: data.post, userId }),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -43,8 +50,8 @@ export default function PostForm({ onAddPost }) {
 
     if (response.ok) {
         const newPost = await response.json();
-        onAddPost(newPost); // Call the function passed down from Home
-        form.reset(); // Reset form after submission
+        onAddPost(newPost);
+        form.reset();
         console.log('Post created successfully!');
     } else {
         console.error('Failed to create post:', await response.json());
@@ -58,7 +65,7 @@ export default function PostForm({ onAddPost }) {
   };
 
   return (
-    <div>
+    <div className="mt-3 ml-[65px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[300px] md:w-[500px] mb-6 md:mt-[-20px]">
           <FormField
