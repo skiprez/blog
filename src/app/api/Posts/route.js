@@ -4,10 +4,10 @@ import { Client } from 'pg';
 const client = new Client({
     connectionString: process.env.POSTGRES_URL,
 });
-  
+
 client.connect();
 
 export async function GET() {
-    const res = await client.query('SELECT * FROM messages ORDER BY created_at ASC');
+    const res = await client.query('SELECT * FROM posts ORDER BY shares DESC');
     return NextResponse.json(res.rows);
 }
