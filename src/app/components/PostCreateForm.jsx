@@ -2,13 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
 import EmojiPicker from "emoji-picker-react";
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-
 import {
     Form,
     FormControl,
@@ -63,7 +60,7 @@ export default function PostForm({ onAddPost }) {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[500px] mb-6 mt-[-20px]">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[300px] md:w-[500px] mb-6 md:mt-[-20px]">
           <FormField
             control={form.control}
             name="post"
@@ -92,7 +89,7 @@ export default function PostForm({ onAddPost }) {
                 </div>
               )}
 
-              <Button type="submit" className="w-[100px] mt-2">Post</Button>
+              <Button type="submit" className="w-[100px] md:w-[100px] mt-2">Post</Button>
           </div>
         </form>
       </Form>

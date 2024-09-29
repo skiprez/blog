@@ -54,7 +54,7 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to toggle like:', error);
     }
-  };  
+  };
 
   const toggleShare = async (postId, shared) => {
     try {
@@ -79,38 +79,33 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col justify-center w-[700px]">
+    <main className="flex flex-col justify-center max-w-full px-4 md:w-[700px] mx-auto">
       {/* Home Transport */}
-      <div className="text-white font-semibold text-xl border-b-[1px] border-x-[1px] border-white w-[700px] p-2 justify-between flex">
-        <Link href="/" className="relative group">
-          Home
+      <div className="text-white font-semibold text-xl border-b border-white w-full p-2 flex justify-between">
+        <Link href="/" className="relative group">Home
           <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
         </Link>
-        <Link href="/chat" className="relative group">
-          Chat
+        <Link href="/chat" className="relative group">Chat
           <span className="absolute left-0 bottom-0 w-full h-[2px] bg-white scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
         </Link>
       </div>
 
       {/* Create a Post */}
-      <div className="border-b-[1px] border-x-[1px] border-white w-[700px] min-h-[150px] p-2">
-        {/* User Info */}
+      <div className="border-b border-white w-full min-h-[150px] p-2">
         <div className="flex flex-row max-w-[200px]">
           <Image src={account_icon} className="w-[50px] h-[50px] rounded-full mb-2" />
           <p className="text-white font-semibold text-md ml-2">Guest</p>
         </div>
-
-        {/* Post Content */}
         <div className="flex flex-col items-center">
           <PostForm onAddPost={addPost} />
         </div>
       </div>
 
       {/* Scrolling Menu */}
-      <div className="text-white text-md border-b-[1px] border-x-[1px] border-white w-[700px] h-[800px] overflow-y-auto">
+      <div className="text-white text-md border-white md:w-full w-[400px] md:max-h-[680px] max-h-[550px] overflow-y-auto">
         {posts.length > 0 ? (
           posts.map((post) => (
-            <div key={post.id} className="border-b-[1px] border-white min-h-[100px] mt-2 flex flex-col p-2">
+            <div key={post.id} className="border-b border-white min-h-[100px] mt-2 flex flex-col p-2">
               {/* User Info */}
               <div className="flex flex-row max-w-[200px]">
                 <Image src={account_icon} className="w-[50px] h-[50px] rounded-full mb-2" />
@@ -121,7 +116,7 @@ export default function Home() {
               <div className="mt-[-30px] ml-[70px] max-w-[580px] flex flex-col">
                 <p>{post.content}</p>
                 {post.file_url && (
-                  <Image src={post.file_url} alt="Uploaded file" className="max-w-[550px] mb-2 mt-2 rounded-md shadow-lg" />
+                  <Image src={post.file_url} alt="Uploaded file" className="max-w-full mb-2 mt-2 rounded-md shadow-lg" />
                 )}
               </div>
 
@@ -154,7 +149,7 @@ export default function Home() {
             </div>
           ))
         ) : (
-          <p className="text-white">No posts available.</p>
+          <p className="text-white font-semibold text-center text-2xl mt-20">No posts available.</p>
         )}
       </div>
     </main>
