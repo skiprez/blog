@@ -17,6 +17,7 @@ import {
 } from "../components/ui/form.jsx";
 import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
+import { motion } from 'framer-motion';
 
 const formSchema = z.object({
   post: z.string().min(3, { message: "Post must be at least 3 characters." }),
@@ -88,9 +89,14 @@ export default function PostForm({ onAddPost }) {
   };
 
   return (
-    <div className="mt-3 ml-[65px]">
+    <motion.div 
+      className="mt-3 bg-gray-800 rounded-lg shadow-lg p-4 min-w-[600px]"
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      transition={{ duration: 0.5 }}
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-[300px] md:w-[500px] mb-6 md:mt-[-20px]">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full mb-6">
           <FormField
             control={form.control}
             name="post"
@@ -101,10 +107,11 @@ export default function PostForm({ onAddPost }) {
                   <Textarea
                     placeholder="What happened today..."
                     {...field}
-                    onKeyDown={handleKeyDown} // Attach the key down handler here
+                    onKeyDown={handleKeyDown}
+                    className="bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
                   />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="text-gray-400">
                   This will be public if you post this.
                 </FormDescription>
                 <FormMessage />
@@ -113,20 +120,20 @@ export default function PostForm({ onAddPost }) {
           />
 
           <div className="flex flex-row items-center justify-between">
-              <Button variant="icon" size="icon" type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                  <EmojiEmotionsOutlinedIcon className="text-blue-500" />
-              </Button>
+            <Button variant="icon" size="icon" type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+              <EmojiEmotionsOutlinedIcon className="text-blue-500" />
+            </Button>
 
-              {showEmojiPicker && (
-                <div className="absolute mt-2">
-                  <EmojiPicker onEmojiClick={handleEmojiClick} />
-                </div>
-              )}
+            {showEmojiPicker && (
+              <div className="absolute mt-2">
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </div>
+            )}
 
-              <Button type="submit" className="w-[100px] md:w-[100px] mt-2">Post</Button>
+            <Button type="submit" className="w-[100px] mt-2 bg-blue-500 hover:bg-blue-600 transition-all duration-300">Post</Button>
           </div>
         </form>
       </Form>
-    </div>
+    </motion.div>
   );
 }
