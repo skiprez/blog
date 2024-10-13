@@ -7,9 +7,18 @@ const client = new Client({
 
 client.connect();
 
+const getUserIdFromSession = (cookies) => {
+  const parsedCookies = cookies ? Object.fromEntries(cookies.split('; ').map(cookie => cookie.split('='))) : {};
+  return parsedCookies['session']; // Ensure 'session' is set correctly
+};
+
 export async function GET(req) {
-  const userIdCookie = req.cookies.get('session');
-  const userId = userIdCookie.value;
+  const cookies = req.headers.get('cookie');
+  console.log('Cookies:', cookies); // Log the raw cookies
+
+  const userId = getUserIdFromSession(cookies);
+
+  console.log('Parsed User ID:', userId); // Log the parsed user ID
 
   if (userId) {
     return NextResponse.json({ userId }, { status: 200 });
@@ -19,7 +28,7 @@ export async function GET(req) {
 }
 
 const getUsername = async (userId) => {
-  const res = await client.query('SELECT username FROM users WHERE id = $1', [userId]);
+  const res = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
   return res.rows[0];
 };
 
@@ -35,7 +44,7 @@ export async function POST(req) {
     const user = await getUsername(userId);
 
     if (user) {
-      return NextResponse.json({ username: user.username, userId }, { status: 200 });
+      return NextResponse.json({ username: user.username, userId, pfp: user.profile_picture_url }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }

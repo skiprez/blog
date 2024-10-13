@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import SettingsPopup from './components/SettingsPopup';
 import PostForm from './components/PostCreateForm.jsx';
 import AlertCustom from './components/ui/alert.jsx';
 import { Button } from './components/ui/button.jsx';
@@ -26,6 +27,34 @@ export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [pfp, setPfp] = useState('');
+
+  const handleUpdateUsername = async (newUsername, profilePictureUrl) => {
+    // Debugging output
+    console.log({ userId: currentUserId, newUsername, profilePictureUrl });
+  
+    try {
+      const response = await fetch('/api/UserSettings/UpdateUsername', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId, newUsername, profilePictureUrl }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+        setCurrentUser(newUsername);
+        setPfp(profilePictureUrl); // Update the state to reflect the new profile picture
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update username:', response.statusText, errorData);
+      }
+    } catch (error) {
+      console.error('Error updating username:', error);
+    }
+  };       
+  
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -54,8 +83,10 @@ export default function Home() {
             setLoggedIn(true);
             setCurrentUserId(userId); // Set the userId from GET response
             setCurrentUser(dataP.username); // Set the username from POST response
+            setPfp(dataP.profilePictureUrl); // Set the profilePictureUrl from POST response
             console.log('Logged in user:', dataP.username);
             console.log('Current user:', dataG.userId);
+            console.log('Pfp URL:', dataG.profilePictureUrl);
           } else {
             console.error('POST request failed', responseP.status);
             setLoggedIn(false);
@@ -208,14 +239,14 @@ export default function Home() {
         <div className="border-b border-white w-full min-h-[150px] p-4 flex flex-col rounded-lg bg-gray-800 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Image src={account_icon} className="w-[50px] h-[50px] rounded-full" />
+              <Image src={pfp || account_icon} className="w-[50px] h-[50px] rounded-full" width={50} height={50}/>
               <p className="text-white font-semibold text-md ml-2">
                 {currentUser ? `${currentUser}` : 'Guest'}
               </p>
             </div>
             <div className="flex justify-between w-[90px]">
               {loggedIn && (
-                <Button className="w-10 h-10">
+                <Button  onClick={() => setShowSettings(true)} className="w-10 h-10">
                   <SettingsOutlinedIcon />
                 </Button>
               )}
@@ -244,11 +275,10 @@ export default function Home() {
             <div key={post.id} className={`border-b w-full border-white min-h-[120px] mt-4 flex flex-col p-4 transition-all bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md ${removingPostId === post.id ? 'fade-out' : 'fade-in'}`}>
               {/* User Info */}
               <div className="flex items-center mb-2">
-                <Image src={account_icon} className="w-[50px] h-[50px] rounded-full" />
+                <Image src={post.profilePictureUrl || account_icon} className="w-[50px] h-[50px] rounded-full" /> {/* Use profile picture URL */}
                 <p className="text-white font-semibold text-md ml-2">
-                  {post.username ? post.username : 'Guest'} {/* Updated to use username */}
+                  {post.username ? post.username : 'Guest'}
                 </p>
-                {/* Show delete button if the user is the post owner */}
                 {post.user_id === currentUserId && (
                   <Button variant="icon" size="icon" onClick={() => deletePost(post.id)} className="ml-auto">
                     <DeleteOutlineOutlinedIcon className="text-red-600" />
@@ -304,6 +334,14 @@ export default function Home() {
         type={alertType} 
         onClose={handleAlertClose} 
         className={alertOpen ? 'slide-in' : ''}
+      />
+
+      {/* Settings Popup */}
+      <SettingsPopup
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        currentUsername={currentUser}
+        onUpdateUsername={handleUpdateUsername}
       />
     </main>
   );

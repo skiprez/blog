@@ -80,11 +80,10 @@ export default function PostForm({ onAddPost }) {
     setShowEmojiPicker(false);
   };
 
-  // Add a handler for the Enter key
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) { // Check if Enter key is pressed without Shift
-      event.preventDefault(); // Prevent default behavior (newline)
-      form.handleSubmit(onSubmit)(); // Call the submit function
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      form.handleSubmit(onSubmit)();
     }
   };
 

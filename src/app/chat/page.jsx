@@ -14,7 +14,7 @@ import account_icon from './../../public/account_icon.png';
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userId, setUserId] = useState(''); // Assuming you'll set this through an auth method
+  const [userId, setUserId] = useState(null); // Use null to indicate loading state
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   
   const [alertOpen, setAlertOpen] = useState(false);
@@ -22,39 +22,67 @@ export default function Chat() {
 
   const messagesEndRef = useRef(null);
 
+  // Fetch user ID and messages
   useEffect(() => {
-    // Set userId here based on your authentication method
-    const storedUserId = 'Your logic to retrieve user ID'; // e.g., from auth context or cookies
-    setUserId(storedUserId);
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch('/api/Auth/LoginCheck', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+        console.log('User ID Response:', data); // Log the response data
+        if (response.ok) {
+          setUserId(data.userId);
+        } else {
+          console.error('Error fetching user ID:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    };         
 
-    async function fetchMessages() {
+    const fetchMessages = async () => {
       try {
         const response = await fetch('/api/Messages');
         const data = await response.json();
-        console.log('Fetched Messages:', data);
-        setMessages(data);
+        if (response.ok) {
+          setMessages(data);
+        } else {
+          console.error('Error fetching messages:', data.message);
+        }
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
-    }
+    };
 
+    fetchUserId();
     fetchMessages();
-    const intervalId = setInterval(fetchMessages, 2000);
+    const intervalId = setInterval(fetchMessages, 4000);
+
     return () => clearInterval(intervalId);
   }, []);
 
+  // Scroll to the bottom of the messages
   useEffect(() => {
     if (!isUserScrolling && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isUserScrolling]);
 
+  // Handle sending a new message
   const handleSendMessage = async () => {
-    if (newMessage.trim() === '') return;
-
-    const newMessageData = { user_id: userId, content: newMessage }; // Send the user ID directly
+    if (newMessage.trim() === '' || !userId) {
+      console.log('Cannot send message. User ID:', userId, 'New Message:', newMessage);
+      return; // Ensure both fields are not empty
+    }
+  
+    const newMessageData = { user_id: userId, content: newMessage };
+    console.log('Sending message:', newMessageData);
+    
+    // Optimistically update messages
     setMessages((prev) => [...prev, { ...newMessageData, id: Date.now(), created_at: new Date() }]);
-
+  
     try {
       const response = await fetch('/api/Messages', {
         method: 'POST',
@@ -63,37 +91,57 @@ export default function Chat() {
         },
         body: JSON.stringify(newMessageData),
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error sending message:', errorData);
+        setAlertMessage('Error sending message: ' + errorData.message);
+        setAlertOpen(true);
+        setTimeout(() => setAlertOpen(false), 3000);
+        return;
+      }
+  
       const savedMessage = await response.json();
       console.log('Saved Message:', savedMessage);
-      
-      // Show alert on successful send
       setAlertMessage('Message sent successfully!');
       setAlertOpen(true);
-
-      // Optionally hide alert after 3 seconds
       setTimeout(() => setAlertOpen(false), 3000);
+      
     } catch (error) {
       console.error('Error sending message:', error);
       setAlertMessage('Error sending message!');
       setAlertOpen(true);
       setTimeout(() => setAlertOpen(false), 3000);
     }
-
+  
     setNewMessage('');
+  };  
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevents new line in the input
+      handleSendMessage(); // Call handleSendMessage directly
+    }
   };
 
   return (
     <div className="flex flex-col h-screen w-full max-w-3xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="flex justify-between items-center p-4">
-        <h1 className="text-center text-2xl font-bold text-white">
-          Chat of All Users
-        </h1>
+        <h1 className="text-center text-2xl font-bold text-white">Chat of All Users</h1>
         <Link href="/">
           <IconButton color="inherit">
             <ExitToApp className="text-white"/>
           </IconButton>
         </Link>
+      </div>
+
+      {/* Display User ID */}
+      <div className="text-center text-white">
+        {userId !== null ? (
+          userId ? <p>User ID: {userId}</p> : <p>Not logged in.</p>
+        ) : (
+          <p>Loading User ID...</p>
+        )}
       </div>
 
       {/* Message List */}
@@ -104,7 +152,7 @@ export default function Chat() {
       >
         <div className="space-y-4">
           {messages.map((message) => (
-            <div className={`flex ${message.user_id === userId ? 'justify-end' : 'justify-start'} fade-in`} key={message.id}>
+            <div className={`flex ${message.user_id === userId ? 'justify-end' : 'justify-start'}`} key={message.id}>
               <Card className={`shadow-md rounded-lg border-0 max-w-[75%] ${message.user_id === userId ? 'bg-blue-600' : 'bg-gray-600'}`}>
                 <CardContent className="p-2">
                   <div className="flex items-center space-x-2 text-sm">
@@ -118,7 +166,7 @@ export default function Chat() {
                       />
                     </Link>
                     <Link href={`/user/${message.user_id}`}>
-                      <span className="text-white font-semibold">{message.user_id}</span>
+                      <span className="text-white font-semibold">{message.username}</span> {/* Display username here */}
                     </Link>
                     <span className="text-gray-300 text-xs">
                       {new Date(message.created_at).toLocaleString()}
@@ -144,15 +192,18 @@ export default function Chat() {
             className="mr-2 mb-2 md:mb-0 md:flex-grow"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={handleKeyDown} // Set onKeyDown here
           />
-          <Button className="transition-transform hover:scale-105" onClick={handleSendMessage}>Send</Button>
+          <Button className="transition-transform hover:scale-105" onClick={handleSendMessage}>
+            Send
+          </Button>
         </div>
       </div>
 
       {/* Alert for message sending in the bottom right corner */}
       {alertOpen && (
         <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 1000 }} className="slide-in">
-          <Alert severity="success" onClose={() => setAlertOpen(false)}>
+          <Alert severity={alertMessage.includes('Error') ? 'error' : 'success'} onClose={() => setAlertOpen(false)}>
             {alertMessage}
           </Alert>
         </div>

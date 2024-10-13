@@ -8,12 +8,19 @@ const client = new Client({
 client.connect();
 
 export async function GET() {
-  const res = await client.query('SELECT * FROM messages ORDER BY created_at ASC');
+  const res = await client.query(`
+    SELECT m.id, m.user_id, m.content, m.created_at, u.username
+    FROM messages m
+    JOIN users u ON m.user_id::uuid = u.id
+    ORDER BY m.created_at ASC
+  `);
   return NextResponse.json(res.rows);
 }
 
 export async function POST(request) {
   const { user_id, content } = await request.json();
+
+  console.log('Received Message Data:', { user_id, content });
 
   if (!user_id) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
@@ -23,13 +30,6 @@ export async function POST(request) {
     'INSERT INTO messages (user_id, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
     [user_id, content]
   );
-
-  const countRes = await client.query('SELECT COUNT(*) FROM messages');
-  const messageCount = parseInt(countRes.rows[0].count, 10);
-
-  if (messageCount > 100) {
-    await client.query('DELETE FROM messages WHERE id IN (SELECT id FROM messages ORDER BY created_at ASC LIMIT 5)');
-  }
 
   return NextResponse.json(res.rows[0]);
 }

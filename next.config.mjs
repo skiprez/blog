@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    api: {
-        bodyParser: false, // Disable body parsing for file uploads
+    images: {
+      domains: ['external-content.duckduckgo.com'], // Add other domains as needed
     },
-};
-
-export default nextConfig;
+  };
+  
+  export default nextConfig;
+  
