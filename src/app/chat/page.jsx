@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Button } from './../components/ui/button.jsx';
 import { Input } from './../components/ui/input.jsx';
 import { Card, CardContent } from "./../components/ui/card.jsx";
-import { v4 as uuidv4 } from 'uuid';
 import IconButton from '@mui/material/IconButton';
 import { ExitToApp } from '@mui/icons-material';
 import Alert from '@mui/material/Alert';
@@ -15,23 +14,17 @@ import account_icon from './../../public/account_icon.png';
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(''); // Assuming you'll set this through an auth method
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
-  const lastMessageRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    let storedUserId = localStorage.getItem('userId');
-
-    if (!storedUserId) {
-      storedUserId = uuidv4();
-      localStorage.setItem('userId', storedUserId);
-    }
-
+    // Set userId here based on your authentication method
+    const storedUserId = 'Your logic to retrieve user ID'; // e.g., from auth context or cookies
     setUserId(storedUserId);
 
     async function fetchMessages() {
@@ -59,8 +52,8 @@ export default function Chat() {
   const handleSendMessage = async () => {
     if (newMessage.trim() === '') return;
 
-    const newMessageData = { user_id: userId, content: newMessage };
-    setMessages((prev) => [...prev, { ...newMessageData, id: uuidv4(), created_at: new Date() }]);
+    const newMessageData = { user_id: userId, content: newMessage }; // Send the user ID directly
+    setMessages((prev) => [...prev, { ...newMessageData, id: Date.now(), created_at: new Date() }]);
 
     try {
       const response = await fetch('/api/Messages', {

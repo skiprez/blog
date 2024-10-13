@@ -31,30 +31,46 @@ export default function PostForm({ onAddPost }) {
   });
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const response = await fetch('/api/Auth/LoginCheck', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUserId(data.userId);
+      } else {
+        console.error('Failed to fetch user ID:', await response.json());
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   const onSubmit = async (data) => {
-    const userId = localStorage.getItem('userId');
-    
     if (!userId) {
-      console.error('User ID not found!');
+      console.error('User ID is not available');
       return;
     }
 
     const response = await fetch('/api/Posts', {
-        method: 'POST',
-        body: JSON.stringify({ post: data.post, userId }),
-        headers: {
-            'Content-Type': 'application/json',
-        },
+      method: 'POST',
+      body: JSON.stringify({ post: data.post, userId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-
+    
     if (response.ok) {
-        const newPost = await response.json();
-        onAddPost(newPost);
-        form.reset();
-        console.log('Post created successfully!');
+      const newPost = await response.json();
+      onAddPost(newPost);
+      form.reset();
+      console.log('Post created successfully!');
     } else {
-        console.error('Failed to create post:', await response.json());
+      console.error('Failed to create post:', await response.json());
     }
   };
 
@@ -62,6 +78,14 @@ export default function PostForm({ onAddPost }) {
     const currentValue = form.getValues("post");
     form.setValue("post", currentValue + emojiObject.emoji);
     setShowEmojiPicker(false);
+  };
+
+  // Add a handler for the Enter key
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) { // Check if Enter key is pressed without Shift
+      event.preventDefault(); // Prevent default behavior (newline)
+      form.handleSubmit(onSubmit)(); // Call the submit function
+    }
   };
 
   return (
@@ -75,7 +99,11 @@ export default function PostForm({ onAddPost }) {
               <FormItem>
                 <FormLabel className="font-semibold text-md">Create Post</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="What happened today..." {...field} />
+                  <Textarea
+                    placeholder="What happened today..."
+                    {...field}
+                    onKeyDown={handleKeyDown} // Attach the key down handler here
+                  />
                 </FormControl>
                 <FormDescription>
                   This will be public if you post this.
