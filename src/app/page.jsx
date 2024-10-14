@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -13,7 +13,6 @@ import { Button } from './components/ui/button.jsx';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
@@ -25,7 +24,6 @@ export default function Home() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('info');
-  const [removingPostId, setRemovingPostId] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -89,18 +87,7 @@ export default function Home() {
       }
     };
 
-    const fetchPosts = async () => {
-      const response = await fetch('/api/Posts');
-      if (response.ok) {
-        const data = await response.json();
-        setPosts(data);
-      } else {
-        console.error('Failed to fetch posts:', await response.json());
-      }
-    };
-
     checkLoginStatus();
-    fetchPosts();
   }, []);
 
   const handleLogout = async () => {
@@ -156,23 +143,6 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error toggling like:', error);
-    }
-  };
-
-  const removePost = async (postId) => {
-    const response = await fetch(`/api/Posts/${postId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: currentUserId }),
-    });
-
-    if (response.ok) {
-      setPosts(posts.filter((post) => post.id !== postId));
-      showAlert('Post removed successfully!', 'success');
-    } else {
-      console.error('Failed to remove post:', await response.json());
     }
   };
 
@@ -235,63 +205,38 @@ export default function Home() {
         />
       )}
 
-
-      {/* {showCommentModal && (
-        <CommentModal
-          postId={selectedPostId}
-          onClose={() => setShowCommentModal(false)}
-          // Add any additional props needed for the comments
-        />
-      )} */}
-
-      <div className="flex flex-col w-full max-w-2xl mt-6 space-y-4">
-        {posts.map((post) => (
-          <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
-            <div className="flex items-center justify-between">
-              <h2 className="text-white text-xl font-semibold">{post.username}</h2>
-              {loggedIn && currentUserId === post.userId && (
-                <Button
-                  variant="icon"
-                  className="text-gray-400 hover:text-red-500 transition duration-300"
-                  onClick={() => removePost(post.id)}
-                >
-                  <DeleteOutlineOutlinedIcon />
-                </Button>
-              )}
-            </div>
-            <p className="text-gray-300 mt-1">{post.content}</p>
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex space-x-4">
-                <Button
-                  variant="icon"
-                  onClick={() => toggleLike(post.id, post.liked)}
-                  className="text-gray-400 hover:text-red-500 transition duration-300"
-                >
-                  <FavoriteBorderOutlinedIcon />
-                  <span className="ml-1">{post.likes}</span>
-                </Button>
-                {/* <Button
-                  variant="icon"
-                  className="text-gray-400 hover:text-blue-500 transition duration-300"
-                  onClick={() => {
-                    setSelectedPostId(post.id);
-                    setShowCommentModal(true);
-                  }}
-                >
-                  <ChatBubbleOutlineOutlinedIcon />
-                  <span className="ml-1">{post.comments}</span>
-                </Button> */}
-                <Button
-                  variant="icon"
-                  className="text-gray-400 hover:text-blue-500 transition duration-300"
-                >
-                  <ShareOutlinedIcon />
-                  <span className="ml-1">{post.shares}</span>
-                </Button>
+      <div className="flex flex-col w-full max-w-2xl mt-6 space-y-4 overflow-y-auto max-h-[500px]">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
+              <div className="flex items-center justify-between">
+                <h2 className="text-white text-xl font-semibold">{post.username}</h2>
+              </div>
+              <p className="text-gray-300 mt-1">{post.content}</p>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex space-x-4">
+                  <Button
+                    variant="icon"
+                    onClick={() => toggleLike(post.id, post.liked)}
+                    className="text-gray-400 hover:text-red-500 transition duration-300"
+                  >
+                    <FavoriteBorderOutlinedIcon />
+                    <span className="ml-1">{post.likes}</span>
+                  </Button>
+                  <Button
+                    variant="icon"
+                    className="text-gray-400 hover:text-blue-500 transition duration-300"
+                  >
+                    <ShareOutlinedIcon />
+                    <span className="ml-1">{post.shares}</span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-white text-xl font-semibold text-center">No posts found.</p>
+        )}
       </div>
     </motion.div>
   );
