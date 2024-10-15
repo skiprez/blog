@@ -9,16 +9,16 @@ client.connect();
 
 const getUserIdFromSession = (cookies) => {
   const parsedCookies = cookies ? Object.fromEntries(cookies.split('; ').map(cookie => cookie.split('='))) : {};
-  return parsedCookies['session']; // Ensure 'session' is set correctly
+  return parsedCookies['session'];
 };
 
 export async function GET(req) {
   const cookies = req.headers.get('cookie');
-  console.log('Cookies:', cookies); // Log the raw cookies
+  console.log('Cookies:', cookies);
 
   const userId = getUserIdFromSession(cookies);
 
-  console.log('Parsed User ID:', userId); // Log the parsed user ID
+  console.log('Parsed User ID:', userId);
 
   if (userId) {
     return NextResponse.json({ userId }, { status: 200 });

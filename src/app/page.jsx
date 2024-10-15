@@ -16,6 +16,7 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'; // Import Delete Icon
 
 import account_icon from '../public/account_icon.png';
 
@@ -146,6 +147,30 @@ export default function Home() {
     }
   };
 
+  const deletePost = async (postId) => {
+    try {
+      const response = await fetch(`/api/Posts/${postId}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUserId }),
+      });
+
+      if (response.ok) {
+        showAlert('Post deleted successfully!', 'success');
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+      } else {
+        const data = await response.json();
+        console.error('Failed to delete post:', data.message);
+        showAlert('Failed to delete post!', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      showAlert('Error deleting post!', 'error');
+    }
+  };
+
   const showAlert = (message, type) => {
     setAlertMessage(message);
     setAlertType(type);
@@ -205,14 +230,34 @@ export default function Home() {
         />
       )}
 
-      <div className="flex flex-col w-full max-w-2xl mt-6 space-y-4 overflow-y-auto max-h-[500px]">
+      <div className="flex flex-col gap-4 mt-8 w-5/6 max-h-[650px] overflow-auto custom-scrollbar">
         {posts.length > 0 ? (
           posts.map((post) => (
             <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
               <div className="flex items-center justify-between">
-                <h2 className="text-white text-xl font-semibold">{post.username}</h2>
+                <div className="flex flex-row gap-2 items-center">
+                  <Image
+                    src={pfp || account_icon}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                  <h2 className="text-white text-xl font-semibold">{post.username}</h2>
+                </div>
+
+                {currentUserId === post.user_id && (
+                  <Button
+                    variant="icon"
+                    onClick={() => deletePost(post.id)}
+                    className="text-gray-400 hover:text-red-500 transition duration-300"
+                  >
+                    <DeleteOutlinedIcon />
+                  </Button>
+                )}
               </div>
-              <p className="text-gray-300 mt-1">{post.content}</p>
+              <p className="text-gray-300 mt-4 ml-10">{post.content}</p>
+
               <div className="flex justify-between items-center mt-4">
                 <div className="flex space-x-4">
                   <Button

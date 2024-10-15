@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import EmojiPicker from "emoji-picker-react";
+
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+
 import {
     Form,
     FormControl,
@@ -91,7 +93,7 @@ export default function PostForm({ onAddPost }) {
   return (
     <motion.div 
       className="mt-3 bg-gray-800 rounded-lg shadow-lg p-4 min-w-[600px]"
-      initial={{ opacity: 0 }} 
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }} 
       transition={{ duration: 0.5 }}
     >
@@ -125,7 +127,7 @@ export default function PostForm({ onAddPost }) {
             </Button>
 
             {showEmojiPicker && (
-              <div className="absolute mt-2">
+              <div className="absolute mt-[415px] ml-10">
                 <EmojiPicker onEmojiClick={handleEmojiClick} />
               </div>
             )}

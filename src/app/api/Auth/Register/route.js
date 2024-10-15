@@ -8,7 +8,7 @@ const client = new Client({
 client.connect();
 
 export async function POST(req) {
-  const { username, password } = await req.json(); // Use req.json() to parse the request body
+  const { username, password } = await req.json();
 
   // Validate request body
   if (!username || !password) {
@@ -40,5 +40,3 @@ export async function POST(req) {
     });
   }
 }
-
-// You don't need a default export for this file.
