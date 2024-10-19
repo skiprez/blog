@@ -132,14 +132,6 @@ export default function Chat() {
         </Link>
       </div>
 
-      <div className="text-center text-white p-2">
-        {userId !== null ? (
-          userId ? <p>User ID: {userId}</p> : <p>Not logged in.</p>
-        ) : (
-          <p>Loading User ID...</p>
-        )}
-      </div>
-
       <div
         className="flex-grow overflow-y-auto p-4 bg-black/30 backdrop-blur-lg rounded-lg transition-all duration-300 ease-in-out"
         onScroll={() => setIsUserScrolling(true)}
