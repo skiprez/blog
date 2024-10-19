@@ -35,6 +35,8 @@ export default function PostForm({ onAddPost }) {
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [cooldown, setCooldown] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0); // To track remaining time in seconds
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -51,7 +53,34 @@ export default function PostForm({ onAddPost }) {
     };
 
     fetchUserId();
-  }, []);
+
+    // Check if user has a cooldown
+    const lastPostTime = localStorage.getItem(`lastPostTime_${userId}`);
+    if (lastPostTime) {
+      const currentTime = Date.now();
+      const timeDifference = currentTime - parseInt(lastPostTime);
+
+      if (timeDifference < 180000) {  // 180,000ms = 3 minutes
+        const remainingMs = 180000 - timeDifference;
+        setCooldown(true);
+        setRemainingTime(Math.ceil(remainingMs / 1000)); // Convert to seconds
+
+        // Start a timer to count down
+        const interval = setInterval(() => {
+          setRemainingTime((prevTime) => {
+            if (prevTime <= 1) {
+              clearInterval(interval); // Stop the timer when cooldown is done
+              setCooldown(false); // Reset the cooldown
+              return 0;
+            }
+            return prevTime - 1;
+          });
+        }, 1000);
+
+        return () => clearInterval(interval); // Clean up the timer on component unmount
+      }
+    }
+  }, [userId]);
 
   const onSubmit = async (data) => {
     if (!userId) {
@@ -59,6 +88,16 @@ export default function PostForm({ onAddPost }) {
       return;
     }
 
+    // Check for cooldown before submitting
+    const lastPostTime = localStorage.getItem(`lastPostTime_${userId}`);
+    const currentTime = Date.now();
+
+    if (lastPostTime && (currentTime - parseInt(lastPostTime)) < 180000) {
+      console.error('You must wait 3 minutes before posting again.');
+      return;
+    }
+
+    // Proceed with submission if no cooldown
     const response = await fetch('/api/Posts', {
       method: 'POST',
       body: JSON.stringify({ post: data.post, userId }),
@@ -71,7 +110,26 @@ export default function PostForm({ onAddPost }) {
       const newPost = await response.json();
       onAddPost(newPost);
       form.reset();
-      console.log('Post created successfully!');
+
+      // Set new cooldown timer in localStorage
+      localStorage.setItem(`lastPostTime_${userId}`, currentTime.toString());
+
+      // Trigger cooldown state and set timer
+      setCooldown(true);
+      setRemainingTime(180); // 3 minutes = 180 seconds
+
+      // Start a timer to count down
+      const interval = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(interval); // Stop the timer when cooldown is done
+            setCooldown(false); // Reset the cooldown
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
     } else {
       console.error('Failed to create post:', await response.json());
     }
@@ -132,7 +190,13 @@ export default function PostForm({ onAddPost }) {
               </div>
             )}
 
-            <Button type="submit" className="w-[100px] mt-2 bg-blue-500 hover:bg-blue-600 transition-all duration-300">Post</Button>
+            <Button 
+              type="submit" 
+              className={`w-[100px] mt-2 ${cooldown ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} transition-all duration-300`}
+              disabled={cooldown} // Disable button during cooldown
+            >
+              {cooldown ? `Wait ${remainingTime}s` : 'Post'} {/* Show cooldown time or "Post" */}
+            </Button>
           </div>
         </form>
       </Form>

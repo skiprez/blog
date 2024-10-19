@@ -16,7 +16,7 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'; // Import Delete Icon
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 import account_icon from '../public/account_icon.png';
 
@@ -185,7 +185,7 @@ export default function Home() {
   return (
     <motion.div className="bg-gray-900 min-h-screen flex flex-col items-center min-w-[700px]">
       <div className="flex justify-between w-full p-4 border-b border-gray-700">
-        <h1 className="text-white text-4xl font-bold">Blog</h1>
+        <h1 className="text-white text-3xl font-bold">Tech Threads</h1>
         <div className="flex items-center space-x-4">
           {loggedIn ? (
             <>

@@ -22,6 +22,7 @@ export default function Chat() {
   
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [isCooldown, setIsCooldown] = useState(false); // Cooldown state
 
   const messagesEndRef = useRef(null);
 
@@ -72,9 +73,9 @@ export default function Chat() {
     }
   }, [messages, isUserScrolling]);
 
-  // Handle sending a new message
+  // Handle sending a new message with a one-minute cooldown
   const handleSendMessage = async () => {
-    if (newMessage.trim() === '' || !userId) {
+    if (newMessage.trim() === '' || !userId || isCooldown) {
       return; 
     }
   
@@ -104,6 +105,10 @@ export default function Chat() {
       setAlertMessage('Message sent successfully!');
       setAlertOpen(true);
       setTimeout(() => setAlertOpen(false), 3000);
+
+      // Trigger cooldown for one minute
+      setIsCooldown(true);
+      setTimeout(() => setIsCooldown(false), 30000); // 30s
       
     } catch (error) {
       setAlertMessage('Error sending message!');
@@ -124,7 +129,7 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-screen max-w-3xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl rounded-lg overflow-hidden min-w-[900px]">
       <div className="flex justify-between items-center p-4 bg-gray-800 transition-colors duration-300 ease-in-out hover:bg-gray-700">
-        <h1 className="text-2xl font-bold text-white text-shadow">Futuristic Chat</h1>
+        <h1 className="text-2xl font-bold text-white">Tech Talk</h1>
         <Link href="/">
           <IconButton color="inherit">
             <ExitToApp className="text-white transition-transform transform hover:scale-110" />
@@ -178,9 +183,14 @@ export default function Chat() {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={isCooldown} // Disable input during cooldown
         />
-        <Button className="transition-transform hover:scale-105 bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg" onClick={handleSendMessage}>
-          Send
+        <Button 
+          className="transition-transform hover:scale-105 bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg"
+          onClick={handleSendMessage}
+          disabled={isCooldown} // Disable button during cooldown
+        >
+          {isCooldown ? 'Wait...' : 'Send'}
         </Button>
       </div>
 
