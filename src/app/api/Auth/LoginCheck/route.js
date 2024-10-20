@@ -44,7 +44,7 @@ export async function POST(req) {
     const user = await getUsername(userId);
 
     if (user) {
-      return NextResponse.json({ username: user.username, userId, pfp: user.profile_picture_url }, { status: 200 });
+      return NextResponse.json({ username: user.username, userId, pfp: user.profile_picture_url, privileges: user.privileges }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }

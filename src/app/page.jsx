@@ -17,6 +17,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 
 import account_icon from '../public/account_icon.png';
 
@@ -29,6 +30,7 @@ export default function Home() {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [userPrivileges, setUserPrivileges] = useState(0);
   const [pfp, setPfp] = useState('');
 
   const handleUpdateUsername = async (newUsername, profilePictureUrl) => {
@@ -57,12 +59,12 @@ export default function Home() {
         method: 'GET',
         credentials: 'include',
       });
-  
+    
       if (responseG.ok) {
         try {
           const dataG = await responseG.json();
           const userId = dataG.userId;
-
+    
           const responseP = await fetch('/api/Auth/LoginCheck', {
             method: 'POST',
             credentials: 'include',
@@ -71,12 +73,14 @@ export default function Home() {
             },
             body: JSON.stringify({ userId }),
           });
-
+    
           if (responseP.ok) {
             const dataP = await responseP.json();
+            console.log('Response Data:', dataP);  // Log the full response to see its structure
             setLoggedIn(true);
             setCurrentUserId(userId);
             setCurrentUser(dataP.username);
+            setUserPrivileges(dataP.privileges); // Should set privileges if it exists
             setPfp(dataP.profilePictureUrl);
           } else {
             setLoggedIn(false);
@@ -86,7 +90,7 @@ export default function Home() {
           setLoggedIn(false);
         }
       }
-    };
+    };    
 
     checkLoginStatus();
   }, []);
@@ -193,6 +197,13 @@ export default function Home() {
               <Button onClick={handleChatRoute} className="text-gray-400 hover:text-blue-500">
                 <ChatBubbleOutlineOutlinedIcon />
               </Button>
+              {userPrivileges > 2 && ( // Check user privileges
+                <Link href="/admin">
+                  <Button className="text-gray-400 hover:text-blue-500">
+                    <AdminPanelSettingsOutlinedIcon />
+                  </Button>
+                </Link>
+              )}
               <Button onClick={handleLogout} className="text-gray-400 hover:text-red-500">
                 <LogoutOutlinedIcon />
               </Button>
