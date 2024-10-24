@@ -1,9 +1,9 @@
 
-# 🚀 SwapStyle: Dziel się i rozmawiaj w stylu!
+# 🚀 Tech Threads: Dziel się i rozmawiaj w stylu!
 
-<!-- ![SwapStyle Banner](https://path-to-banner-image.com) -->
+<!-- ![Tech Threads Banner](https://path-to-banner-image.com) -->
 
-Witamy w **SwapStyle**, pełnostackowej, open-source'owej aplikacji do dzielenia się postami i rozmów w stylu! 😎 Niezależnie od tego, czy dzielisz się swoimi myślami, przesyłasz zdjęcia, czy rozmawiasz z przyjaciółmi, SwapStyle oferuje wszystko, czego potrzebujesz. Zbudowana na **Next.js**, wspierana przez **PostgreSQL** i stylizowana z dbałością o szczegóły. ✨
+Witamy w **Tech Threads**, pełnostackowej, open-source'owej aplikacji do dzielenia się postami i rozmów w stylu! 😎 Niezależnie od tego, czy dzielisz się swoimi myślami, przesyłasz zdjęcia, czy rozmawiasz z przyjaciółmi, Tech Threads oferuje wszystko, czego potrzebujesz. Zbudowana na **Next.js**, wspierana przez **PostgreSQL** i stylizowana z dbałością o szczegóły. ✨
 
 ---
 
@@ -34,7 +34,7 @@ Witamy w **SwapStyle**, pełnostackowej, open-source'owej aplikacji do dzielenia
 
    ```bash
    git clone https://github.com/skiprez/blog.git
-   cd swapstyle
+   cd TechThreads
    ```
 
 2. **Zainstaluj zależności:**
@@ -62,14 +62,6 @@ Witamy w **SwapStyle**, pełnostackowej, open-source'owej aplikacji do dzielenia
 
 ---
 
-## 📸 Zrzuty ekranu
-
-| Strona główna                              | Strona czatu                                  |
-|--------------------------------------------|-----------------------------------------------|
-| ![Home Screenshot](https://path-to-home-screenshot) | ![Chat Screenshot](https://path-to-chat-screenshot) |
-
----
-
 ## 🌟 Współtworzenie
 
 Chętnie przyjmujemy wszelkie wkłady! 💪 Śmiało fork'uj repozytorium, twórz nową gałąź i zgłaszaj pull request. W przypadku większych zmian otwórz problem, aby przedyskutować, co chcesz ulepszyć.
@@ -88,12 +80,6 @@ Chętnie przyjmujemy wszelkie wkłady! 💪 Śmiało fork'uj repozytorium, twór
 
 - GitHub: [@skiprez](https://github.com/skiprez)
 - Twitter: [@twoj-handle](https://twitter.com/skiprez)
-
----
-
-## 📄 Licencja
-
-Ten projekt jest open-source i dostępny na zasadach [licencji MIT](LICENSE).
 
 ---
 
