@@ -17,6 +17,7 @@ import LocalPostOfficeOutlinedIcon from '@mui/icons-material/LocalPostOfficeOutl
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 
 export const fetchCache = 'force-no-store';
+export const dynamic = 'force-dynamic';
 
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);

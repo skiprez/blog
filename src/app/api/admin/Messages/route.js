@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client } from 'pg';
 export const fetchCache = 'force-no-store';
+export const dynamic = 'force-dynamic';
 export async function GET() {
   const client = new Client({
     connectionString: process.env.POSTGRES_URL,
