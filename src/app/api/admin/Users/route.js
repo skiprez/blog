@@ -11,11 +11,7 @@ export async function GET() {
     const res = await client.query('SELECT * FROM users');
     const response = NextResponse.json(res.rows);
 
-    // Set cache-control headers to avoid caching
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Expires', '0');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Surrogate-Control', 'no-store');
+    response.headers.set('Cache-Control', 'no-store, s-maxage=1, stale-while-revalidate=1');
 
     return response;
   } catch (error) {
