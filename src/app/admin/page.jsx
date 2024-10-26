@@ -26,15 +26,9 @@ export default function AdminPanel() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/api/admin/Users');
+        const response = await fetch(`/api/admin/Users?timestamp=${Date.now()}`);
         const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setUsers(data);
-        } else {
-          console.error('Expected an array but got:', data);
-          setUsers([]);
-        }
+        setUsers(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -42,29 +36,21 @@ export default function AdminPanel() {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch('/api/admin/Messages');
+        const response = await fetch(`/api/admin/Messages?timestamp=${Date.now()}`);
         const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setMessages(data);
-        } else {
-          console.error('Expected an array but got:', data);
-          setMessages([]);
-        }
+        setMessages(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
     };
 
     const fetchPosts = async () => {
-      const response = await fetch('/api/admin/Posts');
-      const data = await response.json();
-
-      if (Array.isArray(data)) {
-        setPosts(data);
-      } else {
-        console.error('Expected an array but got:', data);
-        setPosts([]);
+      try {
+        const response = await fetch(`/api/admin/Posts?timestamp=${Date.now()}`);
+        const data = await response.json();
+        setPosts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
       }
     };
 
