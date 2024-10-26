@@ -17,55 +17,61 @@ import LocalPostOfficeOutlinedIcon from '@mui/icons-material/LocalPostOfficeOutl
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 
 export const fetchCache = 'force-no-store';
+
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [posts, setPosts] = useState([]); // Added state for posts
+  const [posts, setPosts] = useState([]);
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`/api/admin/Users?timestamp=${Date.now()}`, { cache: 'no-store' });
-        const data = await response.json();
-        setUsers(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
+    const fetchData = async () => {
+      const fetchOptions = { cache: 'no-store' }; // No caching for fetch requests
+
+      const fetchUsers = async () => {
+        try {
+          const response = await fetch(`/api/admin/Users?timestamp=${Date.now()}`, fetchOptions);
+          const data = await response.json();
+          setUsers(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+
+      const fetchMessages = async () => {
+        try {
+          const response = await fetch(`/api/admin/Messages?timestamp=${Date.now()}`, fetchOptions);
+          const data = await response.json();
+          setMessages(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      };
+
+      const fetchPosts = async () => {
+        try {
+          const response = await fetch(`/api/admin/Posts?timestamp=${Date.now()}`, fetchOptions);
+          const data = await response.json();
+          setPosts(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+        }
+      };
+
+      await Promise.all([fetchUsers(), fetchMessages(), fetchPosts()]); // Fetch all data in parallel
+
+      // Refresh data every 5 seconds
+      const intervalId = setInterval(() => {
+        fetchUsers();
+        fetchMessages();
+        fetchPosts();
+      }, 5000);
+      
+      return () => clearInterval(intervalId);
     };
 
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`/api/admin/Messages?timestamp=${Date.now()}`, { cache: 'no-store' });
-        const data = await response.json();
-        setMessages(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
-
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(`/api/admin/Posts?timestamp=${Date.now()}`, { cache: 'no-store' });
-        const data = await response.json();
-        setPosts(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
-
-    fetchUsers();
-    fetchMessages();
-    fetchPosts();
-
-    const intervalId = setInterval(() => {
-      fetchUsers();
-      fetchMessages();
-      fetchPosts();
-    }, 5000);
-    
-    return () => clearInterval(intervalId);
+    fetchData();
   }, []);
 
   const handleDeleteUser = async (userId) => {
@@ -156,7 +162,7 @@ export default function AdminPanel() {
             </Link>
           </Button>
           <Button variant="icon" className="text-gray-400 hover:text-blue-500 h-[40px] w-[40px]">
-            <Link href='/'>
+            <Link href='/' >
               <LogoutOutlinedIcon />
             </Link>
           </Button>
@@ -201,7 +207,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div id="posts" className="p-4"> {/* Posts section */}
+        <div id="posts" className="p-4">
           <h2 className="text-2xl font-bold text-white mt-4">Posts</h2>
           <div className="flex flex-col gap-4 p-4">
             {posts.map(post => (
