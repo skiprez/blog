@@ -16,6 +16,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import LocalPostOfficeOutlinedIcon from '@mui/icons-material/LocalPostOfficeOutlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 
+export const fetchCache = 'force-no-store';
 export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
