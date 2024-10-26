@@ -26,7 +26,7 @@ export default function AdminPanel() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`/api/admin/Users?timestamp=${Date.now()}`);
+        const response = await fetch(`/api/admin/Users?timestamp=${Date.now()}`, { cache: 'no-store' });
         const data = await response.json();
         setUsers(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -36,7 +36,7 @@ export default function AdminPanel() {
 
     const fetchMessages = async () => {
       try {
-        const response = await fetch(`/api/admin/Messages?timestamp=${Date.now()}`);
+        const response = await fetch(`/api/admin/Messages?timestamp=${Date.now()}`, { cache: 'no-store' });
         const data = await response.json();
         setMessages(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -46,7 +46,7 @@ export default function AdminPanel() {
 
     const fetchPosts = async () => {
       try {
-        const response = await fetch(`/api/admin/Posts?timestamp=${Date.now()}`);
+        const response = await fetch(`/api/admin/Posts?timestamp=${Date.now()}`, { cache: 'no-store' });
         const data = await response.json();
         setPosts(Array.isArray(data) ? data : []);
       } catch (error) {
