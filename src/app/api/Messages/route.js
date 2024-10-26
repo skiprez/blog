@@ -8,28 +8,39 @@ const client = new Client({
 client.connect();
 
 export async function GET() {
-  const res = await client.query(`
-    SELECT m.id, m.user_id, m.content, m.created_at, u.username
-    FROM messages m
-    JOIN users u ON m.user_id::uuid = u.id
-    ORDER BY m.created_at ASC
-  `);
-  return NextResponse.json(res.rows);
+  try {
+    const res = await client.query(`
+      SELECT m.id, m.user_id, m.content, m.created_at, u.username, u.profile_picture_url
+      FROM messages m
+      JOIN users u ON m.user_id::uuid = u.id
+      ORDER BY m.created_at ASC
+    `);
+    
+    return NextResponse.json(res.rows);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+  }
 }
 
 export async function POST(request) {
-  const { user_id, content } = await request.json();
+  const { user_id, content} = await request.json();
 
-  console.log('Received Message Data:', { content });
+  console.log('Received Message Data:', { user_id, content });
 
   if (!user_id) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }
 
-  const res = await client.query(
-    'INSERT INTO messages (user_id, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
-    [user_id, content]
-  );
+  try {
+    const res = await client.query(
+      'INSERT INTO messages (user_id, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
+      [user_id, content]
+    );
 
-  return NextResponse.json(res.rows[0]);
+    return NextResponse.json(res.rows[0]);
+  } catch (error) {
+    console.error('Error inserting message:', error);
+    return NextResponse.json({ error: 'Failed to insert message' }, { status: 500 });
+  }
 }

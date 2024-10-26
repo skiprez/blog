@@ -18,15 +18,15 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [userId, setUserId] = useState(null);
+  const [pfp, setPfp] = useState('');
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [isCooldown, setIsCooldown] = useState(false); // Cooldown state
+  const [isCooldown, setIsCooldown] = useState(false);
 
   const messagesEndRef = useRef(null);
 
-  // Fetch user ID and messages
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -43,7 +43,33 @@ export default function Chat() {
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
-    };         
+    };   
+    
+    const fetchPfp = async () => {
+      try {
+        const response = await fetch(`/api/Auth/LoginCheck`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Response Data:', data);
+          setPfp(data.pfp);
+        } else {
+          const errorData = await response.json();
+          console.error('Error fetching profile picture:', errorData.message);
+          setPfp('');
+        }
+      } catch (error) {
+        console.error('Error fetching profile picture:', error);
+        setPfp('');
+      }
+    };
 
     const fetchMessages = async () => {
       try {
@@ -59,6 +85,7 @@ export default function Chat() {
       }
     };
 
+    fetchPfp();
     fetchUserId();
     fetchMessages();
     const intervalId = setInterval(fetchMessages, 4000);
@@ -66,14 +93,12 @@ export default function Chat() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Scroll to the bottom of the messages
   useEffect(() => {
     if (!isUserScrolling && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isUserScrolling]);
 
-  // Handle sending a new message with a one-minute cooldown
   const handleSendMessage = async () => {
     if (newMessage.trim() === '' || !userId || isCooldown) {
       return; 
@@ -81,7 +106,6 @@ export default function Chat() {
   
     const newMessageData = { user_id: userId, content: newMessage };
     
-    // Optimistically update messages
     setMessages((prev) => [...prev, { ...newMessageData, id: Date.now(), created_at: new Date() }]);
   
     try {
@@ -106,9 +130,8 @@ export default function Chat() {
       setAlertOpen(true);
       setTimeout(() => setAlertOpen(false), 3000);
 
-      // Trigger cooldown for one minute
       setIsCooldown(true);
-      setTimeout(() => setIsCooldown(false), 30000); // 30s
+      setTimeout(() => setIsCooldown(false), 30000);
       
     } catch (error) {
       setAlertMessage('Error sending message!');
@@ -150,7 +173,7 @@ export default function Chat() {
                   <div className="flex items-center space-x-2 text-sm">
                     <Link href={`/user/${message.user_id}`} className="mt-2">
                       <Image 
-                        src={account_icon} 
+                        src={pfp || account_icon}
                         className="w-[45px] sm:w-[30px] sm:h-[30px] rounded-full mb-[7px] object-cover" 
                         alt="Account Icon" 
                         width={30} 

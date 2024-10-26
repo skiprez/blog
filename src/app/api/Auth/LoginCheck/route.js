@@ -28,7 +28,8 @@ export async function GET(req) {
 }
 
 const getUsername = async (userId) => {
-  const res = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
+  const res = await client.query('SELECT username, profile_picture_url, privileges FROM users WHERE id = $1', [userId]);
+  console.log('Full query response:', res);
   return res.rows[0];
 };
 
@@ -44,10 +45,11 @@ export async function POST(req) {
     const user = await getUsername(userId);
 
     if (user) {
-      return NextResponse.json({ username: user.username, userId, pfp: user.profile_picture_url, privileges: user.privileges }, { status: 200 });
+      return NextResponse.json({ username: user.username, userId, pfp: user.profile_picture_url || '', privileges: user.privileges }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
+
   } catch (error) {
     console.error("Error handling POST request:", error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });

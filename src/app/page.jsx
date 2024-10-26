@@ -32,18 +32,18 @@ export default function Home() {
   const [userPrivileges, setUserPrivileges] = useState(0);
   const [pfp, setPfp] = useState('');
 
-  const handleUpdateUsername = async (newUsername, profilePictureUrl) => {
+  const handleUpdateUsername = async (newUsername, profile_picture_url) => {
     try {
       const response = await fetch('/api/UserSettings/UpdateUsername', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: currentUserId, newUsername, profilePictureUrl }),
+        body: JSON.stringify({ userId: currentUserId, newUsername, profile_picture_url }),
       });
   
       if (response.ok) {
         const data = await response.json();
         setCurrentUser(newUsername);
-        setPfp(profilePictureUrl);
+        setPfp(profile_picture_url);
       } else {
         console.error('Failed to update username:', await response.json());
       }
@@ -75,12 +75,13 @@ export default function Home() {
     
           if (responseP.ok) {
             const dataP = await responseP.json();
-            console.log('Response Data:', dataP);  // Log the full response to see its structure
+            console.log('Response Data:', dataP);
             setLoggedIn(true);
             setCurrentUserId(userId);
             setCurrentUser(dataP.username);
-            setUserPrivileges(dataP.privileges); // Should set privileges if it exists
-            setPfp(dataP.profilePictureUrl);
+            setUserPrivileges(dataP.privileges);
+            console.log('Response Data:',  dataP.pfp);
+            setPfp(dataP.pfp);
           } else {
             setLoggedIn(false);
           }
@@ -217,7 +218,7 @@ export default function Home() {
               <Button onClick={handleChatRoute} className="text-gray-400 hover:text-blue-500">
                 <ChatBubbleOutlineOutlinedIcon />
               </Button>
-              {userPrivileges > 2 && ( // Check user privileges
+              {userPrivileges > 2 && (
                 <Link href="/admin">
                   <Button className="text-gray-400 hover:text-blue-500">
                     <AdminPanelSettingsOutlinedIcon />
