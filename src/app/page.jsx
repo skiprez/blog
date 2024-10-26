@@ -10,8 +10,7 @@ import PostForm from './components/PostCreateForm.jsx';
 import AlertCustom from './components/ui/alert.jsx';
 import { Button } from './components/ui/button.jsx';
 
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
@@ -139,7 +138,7 @@ export default function Home() {
         },
         body: JSON.stringify({ userId: currentUserId }),
       });
-
+  
       if (response.ok) {
         const updatedPost = await response.json();
         setPosts((prevPosts) =>
@@ -150,6 +149,27 @@ export default function Home() {
       console.error('Error toggling like:', error);
     }
   };
+  
+  const toggleDislike = async (postId, disliked) => {
+    try {
+      const response = await fetch(`/api/Posts/${postId}/dislike/`, {
+        method: disliked ? 'DELETE' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUserId }),
+      });
+  
+      if (response.ok) {
+        const updatedPost = await response.json();
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => (post.id === postId ? updatedPost : post))
+        );
+      }
+    } catch (error) {
+      console.error('Error toggling dislike:', error);
+    }
+  };  
 
   const deletePost = async (postId) => {
     try {
@@ -270,21 +290,22 @@ export default function Home() {
               <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
 
               <div className="flex justify-between items-center mt-4">
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 items-center">
                   <Button
                     variant="icon"
                     onClick={() => toggleLike(post.id, post.liked)}
-                    className="text-gray-400 hover:text-red-500 transition duration-300"
+                    className="text-gray-400 hover:text-blue-500 transition duration-300"
                   >
-                    <FavoriteBorderOutlinedIcon />
+                    <ThumbUpOutlinedIcon />
                     <span className="ml-1">{post.likes}</span>
                   </Button>
                   <Button
                     variant="icon"
-                    className="text-gray-400 hover:text-blue-500 transition duration-300"
+                    onClick={() => toggleDislike(post.id, post.disliked)}
+                    className="text-gray-400 hover:text-red-500 transition duration-300"
                   >
-                    <ShareOutlinedIcon />
-                    <span className="ml-1">{post.shares}</span>
+                    <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
+                    <span className="ml-1">{post.dislikes}</span>
                   </Button>
                 </div>
               </div>
@@ -293,6 +314,7 @@ export default function Home() {
         ) : (
           <p className="text-white text-xl font-semibold text-center">No posts found.</p>
         )}
+        <Link href="/patch-notes" className="text-center text-blue-400 border-t-2 p-2">Patch Notes</Link>
       </div>
     </motion.div>
   );

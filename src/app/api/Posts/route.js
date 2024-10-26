@@ -13,7 +13,7 @@ export async function GET() {
       SELECT p.*, u.username 
       FROM posts p
       LEFT JOIN users u ON p.user_id = u.id
-      ORDER BY p.shares DESC
+      ORDER BY p.likes DESC
     `);
     return NextResponse.json(res.rows);
   } catch (error) {

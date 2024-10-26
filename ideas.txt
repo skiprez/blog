@@ -6,9 +6,9 @@
 6. Add the admin panel ✅
 7. Tag users in the post that have an link inside the text looking like "http://localhost:3000/user/f086776d-ed41-4829-863b-55f77e7e50dd"
 8. Remove the user id in /chat ✅
-9. Patchnotes page for users/moderators and about page of the project
+9. Patchnotes page for users/moderators and about page of the project ✅
 10. Limit spam of posts/messages ✅
-11. Repair vanishing post when liking and share
+11. Repair liking and dislike ✅
 12. Add reply function
 13. Add reactions to the messages in the chat
 
