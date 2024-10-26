@@ -71,8 +71,8 @@ export default function AdminPanel() {
     try {
       await fetch(`/api/admin/Users/${userId}/Delete`, {
         method: 'DELETE',
+        cache: 'no-store'
       });
-      fetchUsers();
       setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -88,6 +88,7 @@ export default function AdminPanel() {
         },
         body: JSON.stringify(updatedUser),
         credentials: 'include',
+        cache: 'no-store'
       });
       setUsers(users.map(user => (user.id === updatedUser.id ? updatedUser : user)));
     } catch (error) {
@@ -99,6 +100,7 @@ export default function AdminPanel() {
     try {
       await fetch(`/api/admin/Messages/${messageId}/Delete`, {
         method: 'DELETE',
+        cache: 'no-store'
       });
       setMessages(messages.filter(message => message.id !== messageId));
     } catch (error) {
@@ -110,8 +112,8 @@ export default function AdminPanel() {
     try {
       await fetch(`/api/admin/Posts/${postId}/Delete`, {
         method: 'DELETE',
+        cache: 'no-store'
       });
-      fetchPosts();
       setPosts(posts.filter(post => post.id !== postId));
     } catch (error) {
       console.error('Error deleting post:', error);
