@@ -267,7 +267,7 @@ export default function Home() {
                   </Button>
                 )}
               </div>
-              <p className="text-gray-300 mt-4 ml-10">{post.content}</p>
+              <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
 
               <div className="flex justify-between items-center mt-4">
                 <div className="flex space-x-4">
