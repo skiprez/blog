@@ -75,6 +75,14 @@ export default function AdminPanel() {
     fetchUsers();
     fetchMessages();
     fetchPosts();
+
+    const intervalId = setInterval(() => {
+      fetchUsers();
+      fetchMessages();
+      fetchPosts();
+    }, 5000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleDeleteUser = async (userId) => {
@@ -82,6 +90,7 @@ export default function AdminPanel() {
       await fetch(`/api/admin/Users/${userId}/Delete`, {
         method: 'DELETE',
       });
+      fetchUsers();
       setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -120,6 +129,7 @@ export default function AdminPanel() {
       await fetch(`/api/admin/Posts/${postId}/Delete`, {
         method: 'DELETE',
       });
+      fetchPosts();
       setPosts(posts.filter(post => post.id !== postId));
     } catch (error) {
       console.error('Error deleting post:', error);
