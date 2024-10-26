@@ -57,18 +57,14 @@ export default function AdminPanel() {
     };
 
     const fetchPosts = async () => {
-      try {
-        const response = await fetch('/api/admin/Posts');
-        const data = await response.json();
+      const response = await fetch('/api/admin/Posts');
+      const data = await response.json();
 
-        if (Array.isArray(data)) {
-          setPosts(data);
-        } else {
-          console.error('Expected an array but got:', data);
-          setPosts([]);
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error('Expected an array but got:', data);
+        setPosts([]);
       }
     };
 
