@@ -26,8 +26,6 @@ export async function GET() {
 export async function POST(request) {
   const { user_id, content} = await request.json();
 
-  console.log('Received Message Data:', { user_id, content });
-
   if (!user_id) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }

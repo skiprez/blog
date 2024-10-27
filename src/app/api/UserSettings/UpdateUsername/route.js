@@ -61,8 +61,7 @@ const allowedDomains = [
 
 export async function POST(req) {
   const { userId, newUsername, profile_picture_url } = await req.json();
-  
-  console.log("Received data:", { userId, newUsername, profile_picture_url });
+
 
   const url = new URL(profile_picture_url);
   const domain = url.hostname;
@@ -75,8 +74,6 @@ export async function POST(req) {
     const query = 'UPDATE users SET username = $1, profile_picture_url = $2 WHERE id = $3';
     const values = [newUsername, profile_picture_url || null, userId];
     const result = await client.query(query, values);
-
-    console.log("Update query executed. Rows affected:", result.rowCount);
 
     if (result.rowCount === 0) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });

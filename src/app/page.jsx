@@ -31,11 +31,6 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [userPrivileges, setUserPrivileges] = useState(0);
   const [pfp, setPfp] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
-
-  const isMobileDevice = () => {
-    return /Mobi|Android/i.test(navigator.userAgent);
-  };
 
   const handleUpdateUsername = async (newUsername, profile_picture_url) => {
     try {
@@ -58,8 +53,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setIsMobile(isMobileDevice());
-    
     const checkLoginStatus = async () => {
       const responseG = await fetch('/api/Auth/LoginCheck', {
         method: 'GET',
@@ -214,7 +207,7 @@ export default function Home() {
   };
 
   return (
-    <motion.div className="bg-gray-900 min-h-screen flex flex-col items-center px-4 min-w-[390px] max-w-[390px] md:min-w-[700px] md:max-w-[700px]">
+    <motion.div className="bg-gray-900 min-h-screen flex flex-col items-center px-4 min-w-[390px] max-w-[390px] md:min-w-[670px] md:max-w-[700px]">
       <div className="flex justify-between w-full p-4 border-b border-gray-700">
         <h1 className="text-white text-2xl font-bold">Tech Threads</h1>
         <div className="flex items-center space-x-2 md:space-x-4">

@@ -13,7 +13,6 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import account_icon from '@/public/account_icon.png';
 
 const UserProfile = ({ params }) => {
-  console.log(params);
   const { id } = params;
   const [currentUserId, setCurrentUserId] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -23,6 +22,37 @@ const UserProfile = ({ params }) => {
   const [alertType, setAlertType] = useState('info');
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioText, setBioText] = useState('');
+
+  const checkLoginStatus = async () => {
+    const responseG = await fetch('/api/Auth/LoginCheck', {
+      method: 'GET',
+      credentials: 'include',
+    });
+  
+    if (responseG.ok) {
+      try {
+        const dataG = await responseG.json();
+        const userId = dataG.userId;
+  
+        const responseP = await fetch('/api/Auth/LoginCheck', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+  
+        if (responseP.ok) {
+          const dataP = await responseP.json();
+          setCurrentUserId(userId);
+        }
+      } catch (error) {
+        console.error('Failed to parse response:', error);
+        setLoggedIn(false);
+      }
+    }
+  };
 
   const toggleLike = async (postId, liked) => {
     try {
@@ -75,7 +105,6 @@ const UserProfile = ({ params }) => {
       if (response.ok) {
         const data = await response.json();
         setUserInfo(data);
-        setCurrentUserId(id);
         setBioText(data.bio);
       } else {
         showAlert('Failed to fetch user data!', 'error');
@@ -107,6 +136,7 @@ const UserProfile = ({ params }) => {
   };
 
   const saveBio = async () => {
+    if (currentUserId !== id) return;
     try {
       const response = await fetch(`/api/UserSettings/${currentUserId}/updateBio`, {
         method: 'POST',
@@ -129,6 +159,7 @@ const UserProfile = ({ params }) => {
 
   useEffect(() => {
     if (id) {
+      checkLoginStatus();
       fetchUserData(id);
       fetchUserPosts(id);
     }
@@ -154,12 +185,12 @@ const UserProfile = ({ params }) => {
           <Image src={userInfo.profile_picture || account_icon} alt="Profile" width={100} height={100} className="rounded-full mt-4" />
           <h1 className="text-3xl font-bold">{userInfo.username}</h1>
           <div className="flex flex-col items-center mt-2">
-            {isEditingBio ? (
+            {isEditingBio && currentUserId === id ? (
               <>
                 <textarea
                   value={bioText}
                   onChange={(e) => setBioText(e.target.value)}
-                  className="text-gray-700 mt-2 max-w-[500px] p-2 rounded"
+                  className="text-gray-700 mt-2 max-w-[500px] p-2 rounded outline-none border-none"
                 />
                 <Button onClick={saveBio} className="mt-2 text-blue-500">
                   Save Bio
@@ -168,12 +199,14 @@ const UserProfile = ({ params }) => {
             ) : (
               <>
                 <p className="mt-2 max-w-[500px]">Bio: {userInfo.bio}</p>
-                <p
-                  className="mt-2 text-gray-300 cursor-pointer"
-                  onClick={() => setIsEditingBio(true)}
-                >
-                  Edit
-                </p>
+                {currentUserId === id && (
+                  <p
+                    className="mt-[1px] text-blue-300 cursor-pointer"
+                    onClick={() => setIsEditingBio(true)}
+                  >
+                    Edit Bio
+                  </p>
+                )}
               </>
             )}
           </div>

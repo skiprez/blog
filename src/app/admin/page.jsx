@@ -3,12 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-import AlertCustom from '../components/ui/alert.jsx';
 import { Button } from '../components/ui/button.jsx';
 import SettingsModal from '../components/SettingsModal';
 
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -28,7 +25,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchOptions = { cache: 'no-store' }; // No caching for fetch requests
+      const fetchOptions = { cache: 'no-store' };
 
       const fetchUsers = async () => {
         try {

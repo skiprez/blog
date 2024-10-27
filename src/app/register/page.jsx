@@ -38,7 +38,6 @@ export default function Register() {
         throw new Error(errorData.message || 'Registration failed');
       }
 
-      // Handle successful registration
       window.location.href = '/login';
     } catch (err) {
       setError(err.message);

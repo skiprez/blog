@@ -30,8 +30,6 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Post content and userId are required' }, { status: 400 });
     }
 
-    console.log('Created post with userID:', userId);
-
     const result = await client.query(
       'INSERT INTO posts (content, user_id) VALUES ($1, $2) RETURNING *',
       [post, userId]
