@@ -9,6 +9,8 @@ import { Button } from '../../components/ui/button.jsx';
 
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 
 import account_icon from '@/public/account_icon.png';
 
@@ -22,6 +24,7 @@ const UserProfile = ({ params }) => {
   const [alertType, setAlertType] = useState('info');
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioText, setBioText] = useState('');
+  const [isFollowing, setIsFollowing] = useState(false); // For follow status
 
   const checkLoginStatus = async () => {
     const responseG = await fetch('/api/Auth/LoginCheck', {
@@ -33,24 +36,46 @@ const UserProfile = ({ params }) => {
       try {
         const dataG = await responseG.json();
         const userId = dataG.userId;
-  
-        const responseP = await fetch('/api/Auth/LoginCheck', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId }),
-        });
-  
-        if (responseP.ok) {
-          const dataP = await responseP.json();
-          setCurrentUserId(userId);
-        }
+        setCurrentUserId(userId);
+        checkFollowStatus(userId);
       } catch (error) {
         console.error('Failed to parse response:', error);
-        setLoggedIn(false);
       }
+    }
+  };
+
+  const checkFollowStatus = async (userId) => {
+    try {
+      const response = await fetch(`/api/Follow/status?followerId=${userId}&followedId=${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setIsFollowing(data.isFollowing);
+      }
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+    }
+  };
+
+  const toggleFollow = async () => {
+    try {
+        const response = await fetch('/api/Follow', {
+            method: isFollowing ? 'DELETE' : 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ followerId: currentUserId, followedId: id }),
+        });
+        if (response.ok) {
+            setIsFollowing((prev) => !prev);
+            showAlert(isFollowing ? 'Unfollowed successfully!' : 'Followed successfully!', 'success');
+        } else {
+            // Handle error response
+            const errorData = await response.json();
+            showAlert(errorData.error || 'Error toggling follow!', 'error'); // Show specific error message
+        }
+    } catch (error) {
+        console.error('Error toggling follow:', error);
+        showAlert('Error toggling follow!', 'error');
     }
   };
 
@@ -72,27 +97,6 @@ const UserProfile = ({ params }) => {
       }
     } catch (error) {
       console.error('Error toggling like:', error);
-    }
-  };
-
-  const toggleDislike = async (postId, disliked) => {
-    try {
-      const response = await fetch(`/api/Posts/${postId}/dislike/`, {
-        method: disliked ? 'DELETE' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: currentUserId }),
-      });
-      if (response.ok) {
-        const updatedPost = await response.json();
-        setUserPosts((prevPosts) =>
-          prevPosts.map((post) => (post.id === postId ? updatedPost : post))
-        );
-        fetchUserPosts(id);
-      }
-    } catch (error) {
-      console.error('Error toggling dislike:', error);
     }
   };
 
@@ -183,6 +187,17 @@ const UserProfile = ({ params }) => {
             </Button>
           </Link>
           <Image src={userInfo.profile_picture || account_icon} alt="Profile" width={100} height={100} className="rounded-full mt-4" />
+          <Button className="p-2 mt-[-15px] flex items-center hover:text-blue-500 rounded-full" onClick={toggleFollow}>
+            {isFollowing ? (
+              <>
+                <AddOutlinedIcon />
+              </>
+            ) : (
+              <>
+                <RemoveOutlinedIcon />
+              </>
+            )}
+          </Button>
           <h1 className="text-3xl font-bold">{userInfo.username}</h1>
           <div className="flex flex-col items-center mt-2">
             {isEditingBio && currentUserId === id ? (
@@ -232,7 +247,7 @@ const UserProfile = ({ params }) => {
                       </Button>
                       <Button
                         variant="icon"
-                        onClick={() => toggleDislike(post.id, post.disliked)}
+                        onClick={() => toggleLike(post.id, post.disliked)}
                         className="text-gray-400 hover:text-red-500 transition duration-300"
                       >
                         <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />

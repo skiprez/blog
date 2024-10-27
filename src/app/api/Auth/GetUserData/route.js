@@ -9,7 +9,6 @@ client.connect();
 
 const getUsername = async (userId) => {
   const res = await client.query('SELECT username, profile_picture_url, privileges, bio FROM users WHERE id = $1', [userId]);
-  console.log('Full query response:', res);
   return res.rows[0];
 };
 

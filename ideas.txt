@@ -1,7 +1,7 @@
-1. Add an comment secton that will display as modal when you click the comment icon under every post betwen the like and share (add hover dropdown for fast comment like "😍, 🤢, 😂" etc. max 4)
+1. Add an comment secton that will display as modal when you click the comment icon under every post after teh like and dislike (add hover dropdown for fast comment like "😍, 🤢, 😂" etc. max 4)
 2. Add discord like pay to look things
 3. Add files upload to posting
-4. Add folow option and then add the following section before the random posts list
+4. Add folow option ✅ and then add the following section before the random posts list ❌
 5. Add the user page ✅
 6. Add the admin panel ✅
 7. Tag users in the post that have an link inside the text looking like "http://localhost:3000/user/f086776d-ed41-4829-863b-55f77e7e50dd"
