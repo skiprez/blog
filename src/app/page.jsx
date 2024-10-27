@@ -80,7 +80,6 @@ export default function Home() {
             setCurrentUserId(userId);
             setCurrentUser(dataP.username);
             setUserPrivileges(dataP.privileges);
-            console.log('Response Data:',  dataP.pfp);
             setPfp(dataP.pfp);
           } else {
             setLoggedIn(false);
@@ -90,7 +89,7 @@ export default function Home() {
           setLoggedIn(false);
         }
       }
-    };    
+    };
 
     checkLoginStatus();
   }, []);
@@ -214,7 +213,15 @@ export default function Home() {
         <div className="flex items-center space-x-4">
           {loggedIn ? (
             <>
-              <Image src={pfp || account_icon} alt="Profile" width={40} height={40} className="rounded-full" />
+              <Link href={`/user/${currentUserId}`}>
+                <Image
+                  src={pfp || account_icon}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full cursor-pointer"
+                />
+              </Link>
               <Button onClick={handleChatRoute} className="text-gray-400 hover:text-blue-500">
                 <ChatBubbleOutlineOutlinedIcon />
               </Button>
@@ -263,58 +270,62 @@ export default function Home() {
       )}
 
       <div className="flex flex-col gap-4 mt-8 w-5/6 max-h-[650px] overflow-auto custom-scrollbar">
-        {posts.length > 0 ? (
-          posts.map((post) => (
-            <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-row gap-2 items-center">
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-row gap-2 items-center">
+                <Link href={`/user/${post.user_id}`}>
                   <Image
-                    src={pfp || account_icon}
+                    src={post.profile_picture_url || account_icon}
                     alt="Profile"
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="rounded-full cursor-pointer"
                   />
-                  <h2 className="text-white text-xl font-semibold">{post.username}</h2>
-                </div>
-
-                {currentUserId === post.user_id && (
-                  <Button
-                    variant="icon"
-                    onClick={() => deletePost(post.id)}
-                    className="text-gray-400 hover:text-red-500 transition duration-300"
-                  >
-                    <DeleteOutlinedIcon />
-                  </Button>
-                )}
+                </Link>
+                <Link href={`/user/${post.user_id}`} className="text-white text-xl font-semibold cursor-pointer">
+                  {post.username}
+                </Link>
               </div>
-              <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
 
-              <div className="flex justify-between items-center mt-4">
-                <div className="flex space-x-4 items-center">
-                  <Button
-                    variant="icon"
-                    onClick={() => toggleLike(post.id, post.liked)}
-                    className="text-gray-400 hover:text-blue-500 transition duration-300"
-                  >
-                    <ThumbUpOutlinedIcon />
-                    <span className="ml-1">{post.likes}</span>
-                  </Button>
-                  <Button
-                    variant="icon"
-                    onClick={() => toggleDislike(post.id, post.disliked)}
-                    className="text-gray-400 hover:text-red-500 transition duration-300"
-                  >
-                    <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
-                    <span className="ml-1">{post.dislikes}</span>
-                  </Button>
-                </div>
+              {currentUserId === post.user_id && (
+                <Button
+                  variant="icon"
+                  onClick={() => deletePost(post.id)}
+                  className="text-gray-400 hover:text-red-500 transition duration-300"
+                >
+                  <DeleteOutlinedIcon />
+                </Button>
+              )}
+            </div>
+            <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
+
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex space-x-4 items-center">
+                <Button
+                  variant="icon"
+                  onClick={() => toggleLike(post.id, post.liked)}
+                  className="text-gray-400 hover:text-blue-500 transition duration-300"
+                >
+                  <ThumbUpOutlinedIcon />
+                  <span className="ml-1">{post.likes}</span>
+                </Button>
+                <Button
+                  variant="icon"
+                  onClick={() => toggleDislike(post.id, post.disliked)}
+                  className="text-gray-400 hover:text-red-500 transition duration-300"
+                >
+                  <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
+                  <span className="ml-1">{post.dislikes}</span>
+                </Button>
               </div>
             </div>
-          ))
-        ) : (
-          <p className="text-white text-xl font-semibold text-center">No posts found.</p>
-        )}
+          </div>
+        ))
+      ) : (
+        <p className="text-white text-xl font-semibold text-center">No posts found.</p>
+      )}
         <Link href="/patch-notes" className="text-center text-blue-400 border-t-2 p-2">Patch Notes</Link>
       </div>
     </motion.div>

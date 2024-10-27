@@ -10,7 +10,7 @@ client.connect();
 export async function GET() {
   try {
     const res = await client.query(`
-      SELECT p.*, u.username 
+      SELECT p.*, u.username, u.profile_picture_url
       FROM posts p
       LEFT JOIN users u ON p.user_id = u.id
       ORDER BY p.likes DESC

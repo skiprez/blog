@@ -14,22 +14,28 @@ const getUserIdFromSession = (cookies) => {
 
 export async function GET(req) {
   const cookies = req.headers.get('cookie');
-  console.log('Cookies:', cookies);
-
   const userId = getUserIdFromSession(cookies);
 
-  console.log('Parsed User ID:', userId);
-
   if (userId) {
-    return NextResponse.json({ userId }, { status: 200 });
+    const user = await getUsername(userId);
+    if (user) {
+      return NextResponse.json({ 
+        userId,
+        username: user.username, 
+        bio: user.bio,
+        profile_picture: user.profile_picture_url || '', 
+        privileges: user.privileges 
+      }, { status: 200 });
+    } else {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
   } else {
     return NextResponse.json({ message: 'Not authenticated' }, { status: 401 });
   }
 }
 
 const getUsername = async (userId) => {
-  const res = await client.query('SELECT username, profile_picture_url, privileges FROM users WHERE id = $1', [userId]);
-  console.log('Full query response:', res);
+  const res = await client.query('SELECT username, profile_picture_url, privileges, bio FROM users WHERE id = $1', [userId]);
   return res.rows[0];
 };
 
