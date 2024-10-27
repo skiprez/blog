@@ -135,7 +135,7 @@ const UserProfile = ({ params }) => {
   }, [id]);
 
   return (
-    <div className="bg-gray-900 min-h-screen min-w-[600px] max-w-[630px] flex flex-col items-center p-4">
+    <div className="bg-gray-900 min-h-screen min-w-[380px] md:min-w-[600px] max-w-[630px] flex flex-col items-center p-4">
       {alertOpen && (
         <AlertCustom
           open={alertOpen}
@@ -145,8 +145,8 @@ const UserProfile = ({ params }) => {
         />
       )}
       {userInfo ? (
-        <div className="text-white flex flex-col items-center">
-          <Link href="/" className="mr-[500px]">
+        <div className="text-white flex flex-col items-center max-w-[380px]">
+          <Link href="/" className=" mr-[300px] md:mr-[500px]">
             <Button className="text-gray-400 hover:text-blue-500">
               <LogoutOutlinedIcon />
             </Button>
@@ -181,7 +181,7 @@ const UserProfile = ({ params }) => {
           <div className="flex flex-col gap-4 mt-2">
             {userPosts.length > 0 ? (
               userPosts.map((post) => (
-                <div key={post.id} className="bg-gray-800 rounded-lg p-4 min-w-[400px] flex flex-col gap-4">
+                <div key={post.id} className="bg-gray-800 rounded-lg p-4 min-w-[370px] max-w-[370px] md:min-w-[400px] md:max-w-[700px] flex flex-col gap-4">
                   <div className="flex gap-4 items-center">
                     <Image src={userInfo.profile_picture || account_icon} alt="Profile" width={50} height={50} className="rounded-full" />
                     <h1 className="text-xl font-bold">{userInfo.username}</h1>

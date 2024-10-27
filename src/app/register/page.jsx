@@ -48,7 +48,7 @@ export default function Register() {
   };
 
   return (
-    <main className="flex flex-col justify-center items-center min-h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 px-4 min-w-[500px] rounded-lg mt-40">
+    <main className="flex flex-col justify-center items-center min-h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 px-4 md:min-w-[500px] rounded-lg md:mt-40 mt-20">
       <motion.div
         className="max-w-sm w-full bg-gray-800 p-8 rounded-lg shadow-2xl transition-transform duration-300 transform hover:scale-105"
         initial={{ opacity: 0, y: -20 }}

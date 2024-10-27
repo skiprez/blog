@@ -150,7 +150,7 @@ export default function PostForm({ onAddPost }) {
 
   return (
     <motion.div 
-      className="mt-3 bg-gray-800 rounded-lg shadow-lg p-4 min-w-[600px]"
+      className="mt-3 bg-gray-800 rounded-lg shadow-lg p-4 md:min-w-[600px] min-w-[370px] md:max-w-[700px]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }} 
       transition={{ duration: 0.5 }}

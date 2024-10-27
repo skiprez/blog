@@ -18,7 +18,6 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [userId, setUserId] = useState(null);
-  const [pfp, setPfp] = useState('');
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   
   const [alertOpen, setAlertOpen] = useState(false);
@@ -43,32 +42,6 @@ export default function Chat() {
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
-    };   
-    
-    const fetchPfp = async () => {
-      try {
-        const response = await fetch(`/api/Auth/LoginCheck`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId }),
-        });
-    
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Response Data:', data);
-          setPfp(data.pfp);
-        } else {
-          const errorData = await response.json();
-          console.error('Error fetching profile picture:', errorData.message);
-          setPfp('');
-        }
-      } catch (error) {
-        console.error('Error fetching profile picture:', error);
-        setPfp('');
-      }
     };
 
     const fetchMessages = async () => {
@@ -85,7 +58,6 @@ export default function Chat() {
       }
     };
 
-    fetchPfp();
     fetchUserId();
     fetchMessages();
     const intervalId = setInterval(fetchMessages, 4000);
@@ -150,7 +122,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-3xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl rounded-lg overflow-hidden min-w-[900px]">
+    <div className="flex flex-col h-screen max-w-3xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl rounded-lg overflow-hidden md:min-w-[900px] min-w-[390px]">
       <div className="flex justify-between items-center p-4 bg-gray-800 transition-colors duration-300 ease-in-out hover:bg-gray-700">
         <h1 className="text-2xl font-bold text-white">Tech Talk</h1>
         <Link href="/">
@@ -173,7 +145,7 @@ export default function Chat() {
                   <div className="flex items-center space-x-2 text-sm">
                     <Link href={`/user/${message.user_id}`} className="mt-2">
                       <Image 
-                        src={pfp || account_icon}
+                        src={`${message.profile_picture_url}` || account_icon}
                         className="w-[45px] sm:w-[30px] sm:h-[30px] rounded-full mb-[7px] object-cover" 
                         alt="Account Icon" 
                         width={30} 

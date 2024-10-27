@@ -31,6 +31,11 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [userPrivileges, setUserPrivileges] = useState(0);
   const [pfp, setPfp] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  const isMobileDevice = () => {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  };
 
   const handleUpdateUsername = async (newUsername, profile_picture_url) => {
     try {
@@ -53,6 +58,8 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setIsMobile(isMobileDevice());
+    
     const checkLoginStatus = async () => {
       const responseG = await fetch('/api/Auth/LoginCheck', {
         method: 'GET',
@@ -207,10 +214,10 @@ export default function Home() {
   };
 
   return (
-    <motion.div className="bg-gray-900 min-h-screen flex flex-col items-center min-w-[700px]">
+    <motion.div className="bg-gray-900 min-h-screen flex flex-col items-center px-4 min-w-[390px] max-w-[390px] md:min-w-[700px] md:max-w-[700px]">
       <div className="flex justify-between w-full p-4 border-b border-gray-700">
-        <h1 className="text-white text-3xl font-bold">Tech Threads</h1>
-        <div className="flex items-center space-x-4">
+        <h1 className="text-white text-2xl font-bold">Tech Threads</h1>
+        <div className="flex items-center space-x-2 md:space-x-4">
           {loggedIn ? (
             <>
               <Link href={`/user/${currentUserId}`}>
@@ -269,63 +276,62 @@ export default function Home() {
         />
       )}
 
-      <div className="flex flex-col gap-4 mt-8 w-5/6 max-h-[650px] overflow-auto custom-scrollbar">
-      {posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-row gap-2 items-center">
-                <Link href={`/user/${post.user_id}`}>
-                  <Image
-                    src={post.profile_picture_url || account_icon}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full cursor-pointer"
-                  />
-                </Link>
-                <Link href={`/user/${post.user_id}`} className="text-white text-xl font-semibold cursor-pointer">
-                  {post.username}
-                </Link>
+      <div className="flex flex-col gap-4 mt-8 w-full max-h-[650px] overflow-auto custom-scrollbar">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post.id} className="bg-gray-800 rounded-lg shadow-lg p-4 transition duration-300 hover:shadow-xl flex flex-col">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-row gap-2 items-center">
+                  <Link href={`/user/${post.user_id}`}>
+                    <Image
+                      src={post.profile_picture_url || account_icon}
+                      alt="Profile"
+                      width={40}
+                      height={40}
+                      className="rounded-full cursor-pointer"
+                    />
+                  </Link>
+                  <Link href={`/user/${post.user_id}`} className="text-white text-lg font-semibold cursor-pointer">
+                    {post.username}
+                  </Link>
+                </div>
+                {currentUserId === post.user_id && (
+                  <Button
+                    variant="icon"
+                    onClick={() => deletePost(post.id)}
+                    className="text-gray-400 hover:text-red-500 transition duration-300"
+                  >
+                    <DeleteOutlinedIcon />
+                  </Button>
+                )}
               </div>
+              <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
 
-              {currentUserId === post.user_id && (
-                <Button
-                  variant="icon"
-                  onClick={() => deletePost(post.id)}
-                  className="text-gray-400 hover:text-red-500 transition duration-300"
-                >
-                  <DeleteOutlinedIcon />
-                </Button>
-              )}
-            </div>
-            <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
-
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex space-x-4 items-center">
-                <Button
-                  variant="icon"
-                  onClick={() => toggleLike(post.id, post.liked)}
-                  className="text-gray-400 hover:text-blue-500 transition duration-300"
-                >
-                  <ThumbUpOutlinedIcon />
-                  <span className="ml-1">{post.likes}</span>
-                </Button>
-                <Button
-                  variant="icon"
-                  onClick={() => toggleDislike(post.id, post.disliked)}
-                  className="text-gray-400 hover:text-red-500 transition duration-300"
-                >
-                  <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
-                  <span className="ml-1">{post.dislikes}</span>
-                </Button>
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex space-x-4 items-center">
+                  <Button
+                    variant="icon"
+                    onClick={() => toggleLike(post.id, post.liked)}
+                    className="text-gray-400 hover:text-blue-500 transition duration-300"
+                  >
+                    <ThumbUpOutlinedIcon />
+                    <span className="ml-1">{post.likes}</span>
+                  </Button>
+                  <Button
+                    variant="icon"
+                    onClick={() => toggleDislike(post.id, post.disliked)}
+                    className="text-gray-400 hover:text-red-500 transition duration-300"
+                  >
+                    <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
+                    <span className="ml-1">{post.dislikes}</span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-white text-xl font-semibold text-center">No posts found.</p>
-      )}
+          ))
+        ) : (
+          <p className="text-white text-lg font-semibold text-center">No posts found.</p>
+        )}
         <Link href="/patch-notes" className="text-center text-blue-400 border-t-2 p-2">Patch Notes</Link>
       </div>
     </motion.div>

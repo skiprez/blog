@@ -38,7 +38,7 @@ const PatchNotes = () => {
   }
 
   return (
-    <Box maxWidth="sm" mx="auto" p={2} className="bg-gray-900">
+    <Box maxWidth="sm" mx="auto" p={2} className="bg-gray-900 max-h-[700px] md:max-h-screen md:h-screen">
       <div className="flex justify-between items-center">
         <Typography variant="h4" gutterBottom className="text-white">
           Patch Notes
@@ -53,8 +53,9 @@ const PatchNotes = () => {
         Latest changes to the codebase.
       </Typography>
       <Box
+        className="md:h-[878px]"
         sx={{
-          height: 878,
+          height: 590,
           overflowY: 'auto',
           border: '1px solid #ccc',
           borderRadius: 1,
