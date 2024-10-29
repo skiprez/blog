@@ -190,11 +190,11 @@ const UserProfile = ({ params }) => {
           <Button className="p-2 mt-[-15px] flex items-center hover:text-blue-500 rounded-full" onClick={toggleFollow}>
             {isFollowing ? (
               <>
-                <AddOutlinedIcon />
+                <RemoveOutlinedIcon />
               </>
             ) : (
               <>
-                <RemoveOutlinedIcon />
+                <AddOutlinedIcon />
               </>
             )}
           </Button>
