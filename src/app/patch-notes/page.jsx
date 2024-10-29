@@ -53,9 +53,9 @@ const PatchNotes = () => {
         Latest changes to the codebase.
       </Typography>
       <Box
-        className="md:h-[878px]"
+        className="md:h-[878px] h-[570px]"
         sx={{
-          height: 590,
+          height: 878,
           overflowY: 'auto',
           border: '1px solid #ccc',
           borderRadius: 1,
