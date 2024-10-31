@@ -53,9 +53,9 @@ const PatchNotes = () => {
         Latest changes to the codebase.
       </Typography>
       <Box
-        className="md:h-[878px]"
+        className="md:h-[878px] h-[570px]"
         sx={{
-          height: 590,
+          height: 878,
           overflowY: 'auto',
           border: '1px solid #ccc',
           borderRadius: 1,
@@ -63,9 +63,9 @@ const PatchNotes = () => {
         }}
       >
         {commits.map(commit => (
-          <Card key={commit.sha} sx={{ mb: 2 }} className="bg-gray-800">
+          <Card key={commit.sha} sx={{ mb: 2 }} className="bg-gray-400">
             <CardContent>
-              <Typography variant="h6" className="font-bold text-gray-50">{commit.commit.message}</Typography>
+              <Typography variant="h6" className="font-bold text-black">{commit.commit.message}</Typography>
               <Typography color="textSecondary" className="text-gray-300">
                 by {commit.commit.author.name} on {new Date(commit.commit.author.date).toLocaleDateString()}
               </Typography>
