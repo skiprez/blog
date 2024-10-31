@@ -1,6 +1,6 @@
 1. Add an comment secton that will display as modal when you click the comment icon under every post after teh like and dislike (add hover dropdown for fast comment like "😍, 🤢, 😂" etc. max 4)
 2. Add discord like pay to look things
-3. Add files upload to posting
+3. Add files upload to posting 
 4. Add folow option ✅ and then add the following section before the random posts list ❌
 5. Add the user page ✅
 6. Add the admin panel ✅
@@ -10,6 +10,6 @@
 10. Limit spam of posts/messages ✅
 11. Repair liking and dislike ✅
 12. Add reply function
-13. Add reactions to the messages in the chat
+13. Add reactions to the messages in the chat 
 
 ???. Add an easter egg minigame

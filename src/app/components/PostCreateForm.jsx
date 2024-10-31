@@ -36,7 +36,7 @@ export default function PostForm({ onAddPost }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [userId, setUserId] = useState(null);
   const [cooldown, setCooldown] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(0); // To track remaining time in seconds
+  const [remainingTime, setRemainingTime] = useState(0);
 
   useEffect(() => {
     const fetchUserId = async () => {

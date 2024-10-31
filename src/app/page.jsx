@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 import SettingsPopup from './components/SettingsPopup';
+import CommentSection from './components/CommentSection.jsx';
 import PostForm from './components/PostCreateForm.jsx';
 import AlertCustom from './components/ui/alert.jsx';
 import { Button } from './components/ui/button.jsx';
@@ -31,6 +32,8 @@ export default function Home() {
   const [showSettings, setShowSettings] = useState(false);
   const [userPrivileges, setUserPrivileges] = useState(0);
   const [pfp, setPfp] = useState('');
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   const handleUpdateUsername = async (newUsername, profile_picture_url) => {
     try {
@@ -202,6 +205,16 @@ export default function Home() {
     setTimeout(() => setAlertOpen(false), 3000);
   };
 
+  const handleOpenComments = (postId) => {
+    setSelectedPostId(postId);
+    setShowCommentModal(true);
+  };
+
+  const handleCloseComments = () => {
+    setShowCommentModal(false);
+    setSelectedPostId(null);
+  };
+
   const handleChatRoute = () => {
     window.location.href = '/chat';
   };
@@ -284,49 +297,44 @@ export default function Home() {
                       className="rounded-full cursor-pointer"
                     />
                   </Link>
-                  <Link href={`/user/${post.user_id}`} className="text-white text-lg font-semibold cursor-pointer">
+                  <Link href={`/user/${post.user_id}`} className="text-white text-lg font-semibold cursor-pointer hover:text-blue-500">
                     {post.username}
                   </Link>
                 </div>
-                {currentUserId === post.user_id && (
-                  <Button
-                    variant="icon"
-                    onClick={() => deletePost(post.id)}
-                    className="text-gray-400 hover:text-red-500 transition duration-300"
-                  >
+                {post.user_id === currentUserId && (
+                  <Button onClick={() => deletePost(post.id)} className="text-gray-400 hover:text-red-500">
                     <DeleteOutlinedIcon />
                   </Button>
                 )}
               </div>
-              <p className="text-gray-300 mt-4 ml-10 max-w-[700px]">{post.content}</p>
-
-              <div className="flex justify-between items-center mt-4">
-                <div className="flex space-x-4 items-center">
-                  <Button
-                    variant="icon"
-                    onClick={() => toggleLike(post.id, post.liked)}
-                    className="text-gray-400 hover:text-blue-500 transition duration-300"
-                  >
-                    <ThumbUpOutlinedIcon />
-                    <span className="ml-1">{post.likes}</span>
-                  </Button>
-                  <Button
-                    variant="icon"
-                    onClick={() => toggleDislike(post.id, post.disliked)}
-                    className="text-gray-400 hover:text-red-500 transition duration-300"
-                  >
-                    <ThumbUpOutlinedIcon style={{ transform: 'rotate(180deg)' }} />
-                    <span className="ml-1">{post.dislikes}</span>
-                  </Button>
-                </div>
+              <p className="text-gray-300 mt-4 mb-4 ml-4 text-lg">{post.content}</p>
+              {post.file_path && (
+                <Image src={post.file_path} alt="Post media" width={350} height={350} className="object-cover rounded-md mx-auto mb-4" />
+              )}
+              <div className="flex space-x-3 items-center">
+                <Button onClick={() => toggleLike(post.id, post.liked)} className="text-gray-400 hover:text-blue-500 w-[50px] h-[35px]">
+                  <ThumbUpOutlinedIcon />
+                  <span className="ml-1">{post.likes}</span>
+                </Button>
+                <Button onClick={() => toggleDislike(post.id, post.disliked)} className="text-gray-400 hover:text-red-500 w-[50px] h-[35px]">
+                  <ThumbUpOutlinedIcon className="transform rotate-180" />
+                  <span className="ml-1">{post.dislikes}</span>
+                </Button>
+                <Button onClick={() => handleOpenComments(post.id)} className="text-gray-400 hover:text-blue-500 w-[50px] h-[35px]">
+                  <ChatBubbleOutlineOutlinedIcon />
+                </Button>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-white text-lg font-semibold text-center">No posts found.</p>
+          <p className="text-gray-500 text-center mt-4">No posts found.</p>
         )}
-        <Link href="/patch-notes" className="text-center text-blue-400 border-t-2 p-2">Patch Notes</Link>
+        <Link class="text-center text-blue-400 border-t-2 p-2" href="/patch-notes">Patch Notes</Link>
       </div>
+
+      {showCommentModal && (
+        <CommentSection postId={selectedPostId} onClose={handleCloseComments} />
+      )}
     </motion.div>
   );
 }
